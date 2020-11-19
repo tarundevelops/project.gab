@@ -26,7 +26,8 @@ private Button start;
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, Login.class));
+
             }
         });
-    }
+   }
 }

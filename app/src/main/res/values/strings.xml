@@ -4,4 +4,6 @@
     <string name="text">Here to learn</string>
     <string name="text2">Welcome</string>
     <string name="Quotes">Quotesv</string>
+    <string name="Drawer_open">Open</string>
+    <string name="Drawer_close">Close</string>
 </resources>

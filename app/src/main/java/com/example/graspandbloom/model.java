@@ -1,7 +1,4 @@
 package com.example.graspandbloom;
-
-import android.net.Uri;
-
 public class model {
     private String eventName;
     private String SpeakerName;

@@ -18,21 +18,21 @@ import java.util.List;
 
 public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
     List<model> eventList;
-    Context context;
+    onItemClickListener clickListener;
 
 
 
 
-    public recyclerv(List<model> eventList, Context context) {
+    public recyclerv(List<model> eventList, onItemClickListener clickListener) {
         this.eventList = eventList;
-        this.context = context;
+        this.clickListener = clickListener;
     }
 
     @NonNull
     @Override
     public recyclerv.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.itemview, parent, false);
-        return new ViewHolder(view, context);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.itemview, parent, false);
+        return new ViewHolder(view, clickListener);
     }
 
     @Override
@@ -42,6 +42,8 @@ public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
 //        holder.eventName.setText(event.getEventName());
         holder.date.setText(event.getDate());
         holder.time.setText(event.getTime());
+
+        holder.eventTitle.setText(event.getEventName());
 
 
         Picasso.get().load(event.getImageUrl()).fit().into(holder.eventImage);
@@ -54,21 +56,26 @@ public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView eventName, SpeakerName, time, date;
-        Button knowMore, register;
+        TextView eventName, SpeakerName, time, date, eventTitle;
+
         ImageView eventImage;
-        public ViewHolder(@NonNull View itemView, Context context) {
+        onItemClickListener clickListener;
+        public ViewHolder(@NonNull View itemView, final onItemClickListener clickListener) {
             super(itemView);
-
-
-
-//            eventName = itemView.findViewById(R.id.enteredTitle);
-//            SpeakerName = itemView.findViewById(R.id.enteredSpeaker);
             date = itemView.findViewById(R.id.enteredDate);
             time = itemView.findViewById(R.id.enteredTiming);
-            knowMore = itemView.findViewById(R.id.KnowMoreButton);
-            register = itemView.findViewById(R.id.registerButton);
             eventImage = itemView.findViewById(R.id.eventImg);
+            eventTitle = itemView.findViewById(R.id.EventTitle);
+            this.clickListener = clickListener;
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.itemClick(getAdapterPosition());
+                }
+            });
         }
+    }
+    public interface onItemClickListener{
+        void itemClick(int position);
     }
 }
