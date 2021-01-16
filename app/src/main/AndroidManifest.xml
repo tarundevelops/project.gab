@@ -15,7 +15,7 @@
         <activity android:name=".home_Activity" />
         <activity android:name=".event_detail_activity" />
         <activity android:name=".create_Account" />
-        <activity android:name=".upcomingLiveEvents_Activity" />
+        <activity android:name=".podcast_Activity" />
         <activity android:name=".Login" />
         <activity android:name=".MainActivity">
             <intent-filter>

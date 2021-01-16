@@ -27,7 +27,7 @@ private Button loginButton;
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Login.this, upcomingLiveEvents_Activity.class));
+                startActivity(new Intent(Login.this, podcast_Activity.class));
             }
         });
 

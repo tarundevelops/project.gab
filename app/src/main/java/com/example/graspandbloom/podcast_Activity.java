@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class upcomingLiveEvents_Activity extends AppCompatActivity implements recyclerv.onItemClickListener {
+public class podcast_Activity extends AppCompatActivity implements recyclerv.onItemClickListener {
     private recyclerv adapter;
     private RecyclerView recyclerView;
     private List<model> eventList;
@@ -36,14 +36,14 @@ public class upcomingLiveEvents_Activity extends AppCompatActivity implements re
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upcoming_liveevents);
+        setContentView(R.layout.activity_podcast);
 
         Toolbar toolbar = findViewById(R.id.toolbar_2);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         signout = findViewById(R.id.signout_button);
         drawerLayout = findViewById(R.id.drawerLayout_ULE);
-        toggle = new ActionBarDrawerToggle(upcomingLiveEvents_Activity.this, drawerLayout, R.string.Drawer_open, R.string.Drawer_close);
+        toggle = new ActionBarDrawerToggle(podcast_Activity.this, drawerLayout, R.string.Drawer_open, R.string.Drawer_close);
 
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -56,15 +56,15 @@ public class upcomingLiveEvents_Activity extends AppCompatActivity implements re
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
-                    case R.id.Home: startActivity(new Intent(upcomingLiveEvents_Activity.this, home_Activity.class));
+                    case R.id.Home: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
                         break;
-                    case R.id.liveEvents: startActivity(new Intent(upcomingLiveEvents_Activity.this, upcomingLiveEvents_Activity.class));
+                    case R.id.liveEvents: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
                         break;
-                    case R.id.talks: startActivity(new Intent(upcomingLiveEvents_Activity.this, upcomingLiveEvents_Activity.class));
+                    case R.id.talks: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
                         break;
-                    case R.id.interviews: startActivity(new Intent(upcomingLiveEvents_Activity.this, interviewsActivity.class));
+                    case R.id.interviews: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
                         break;
-                    case R.id.podcasts: startActivity(new Intent(upcomingLiveEvents_Activity.this, upcomingLiveEvents_Activity.class));
+                    case R.id.podcasts: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
                         break;
                 }
                 return false;
@@ -107,7 +107,7 @@ public class upcomingLiveEvents_Activity extends AppCompatActivity implements re
         signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(upcomingLiveEvents_Activity.this, "ok", Toast.LENGTH_SHORT).show();
+                Toast.makeText(podcast_Activity.this, "ok", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -122,7 +122,7 @@ public class upcomingLiveEvents_Activity extends AppCompatActivity implements re
 
     @Override
     public void itemClick(int position) {
-        Intent intent = new Intent(upcomingLiveEvents_Activity.this, event_detail_activity.class);
+        Intent intent = new Intent(podcast_Activity.this, event_detail_activity.class);
         intent.putExtra("EventTopic", eventList.get(position).getEventName().trim());
         intent.putExtra("EventDescription", eventList.get(position).getEventDescription());
         intent.putExtra("EventSpeaker", eventList.get(position).getSpeakerName());

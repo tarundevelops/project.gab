@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    tools:context=".podcast_Activity"
     android:layout_height="match_parent"
-    tools:context=".interviewsActivity"
-    android:id="@+id/DL_3">
+    android:layout_width="match_parent"
+    android:id="@+id/drawerLayout_ULE">
+
     <RelativeLayout
 
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_3"
+            android:id="@+id/toolbar_2"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             android:background="@color/colorPrimaryDark"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
         <ImageView
-            android:id="@+id/imageView_3"
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="226dp"
-            android:layout_below="@+id/toolbar_3"
+            android:layout_below="@+id/toolbar_2"
             android:background="@drawable/image"
             android:contentDescription="@string/Quotes"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -35,11 +37,21 @@
 
 
     </RelativeLayout>
+    <include layout="@layout/listview" />
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nv_3"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:menu="@menu/drawer_menu"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"/>
+    android:id="@+id/nv_2"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    app:menu="@menu/drawer_menu"
+     android:layout_gravity="start"
+    android:fitsSystemWindows="true">
+        <Button
+            android:id="@+id/signout_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="10dp"
+            android:text="Sign out"/>
+</com.google.android.material.navigation.NavigationView>
+
 </androidx.drawerlayout.widget.DrawerLayout>

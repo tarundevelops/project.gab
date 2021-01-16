@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class ContentView extends AppCompatActivity {
 private recyclerv adapter;
 private RecyclerView recyclerView;
 private List<model> eventList;
+Context mcontext;
 
 
     @Override
@@ -34,7 +36,7 @@ eventList = new ArrayList<>();
     recyclerView = findViewById(R.id.recyclerview);
     recyclerView.setHasFixedSize(true);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    adapter = new recyclerv(eventList, this);
+    adapter = new recyclerv(eventList, (recyclerv.onItemClickListener) mcontext);
     recyclerView.setAdapter(adapter);
     adapter.notifyDataSetChanged();
     }
