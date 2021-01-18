@@ -15,7 +15,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +30,7 @@ import java.util.Objects;
 public class podcast_Activity extends AppCompatActivity implements recyclerv.onItemClickListener {
     private recyclerv adapter;
     private RecyclerView recyclerView;
-    private List<model> eventList;
+    private List<PodcastModel> podcastList = new ArrayList<>();
 
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawerLayout;
@@ -32,6 +38,9 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
     private NavigationView navigationView;
     private Button signout;
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance(); // TestMode
+
+    private CollectionReference podcastDB = db.collection("podcast");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +58,9 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
         toggle.syncState();
 
         navigationView = findViewById(R.id.nv_2);
+        recyclerView = findViewById(R.id.recyclerview);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //View v = navigationView.inflateHeaderView(R.layout.drawerheader);
 
@@ -70,46 +82,50 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
                 return false;
             }
         });
-        eventList = new ArrayList<>();
-        eventList.clear();
-        model e1 = new model();
-        e1.setEventName("Test name");
-        e1.setDate("9 September 2020");
-        e1.setSpeakerName("Tarun");
-        e1.setTime("2:00 P.M. - 2:45 P.M. (IST)");
-        model e2 = new model();
-        e2.setEventName("Test name");
-        e2.setDate("9 September, 2020");
-        e2.setSpeakerName("Tarun");
-        model e3 = new model();
-        e3.setEventName("Test name");
-        e3.setDate("9 September, 2020");
-        e3.setSpeakerName("Tarun");
-        model e4 = new model();
-        e4.setEventName("Test name");
-        e4.setDate("9 September, 2020");
-        e4.setSpeakerName("Tarun");
-        model e5 = new model();
-        e5.setEventName("Test name");
-        e5.setDate("9 September, 2020");
-        e5.setSpeakerName("Tarun");
-        eventList.add(e1);
-        eventList.add(e2);
-        eventList.add(e3);
-        eventList.add(e4);
-        eventList.add(e5);
-        recyclerView = findViewById(R.id.recyclerview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new recyclerv(eventList, this);
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+
+
+
+
+
         signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(podcast_Activity.this, "ok", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        podcastList.clear();
+        podcastDB.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots != null && queryDocumentSnapshots.size() > 0){
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots){
+                        PodcastModel m = queryDocumentSnapshot.toObject(PodcastModel.class);
+
+                        podcastList.add(m);
+                    }
+
+                    setAdapter(podcastList);
+
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(podcast_Activity.this, "Error occured", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setAdapter(List<PodcastModel> pL) {
+        adapter = new recyclerv(pL, this);
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -122,14 +138,14 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
 
     @Override
     public void itemClick(int position) {
-        Intent intent = new Intent(podcast_Activity.this, event_detail_activity.class);
-        intent.putExtra("EventTopic", eventList.get(position).getEventName().trim());
-        intent.putExtra("EventDescription", eventList.get(position).getEventDescription());
-        intent.putExtra("EventSpeaker", eventList.get(position).getSpeakerName());
-        intent.putExtra("EventDate", eventList.get(position).getDate());
-        intent.putExtra("EventTime", eventList.get(position).getDuration());
-        // intent.putExtra("EventImageLink",eventList.get(position).getImageUrl().trim());
-        intent.putExtra("EventOrganizer", eventList.get(position).getOrganizerName());
-        startActivity(intent);
+//        Intent intent = new Intent(podcast_Activity.this, event_detail_activity.class);
+//        intent.putExtra("EventTopic", eventList.get(position).getTopic().trim());
+//        intent.putExtra("EventDescription", eventList.get(position).getEventDescription());
+//        intent.putExtra("EventSpeaker", eventList.get(position).getSpeakerName());
+//        intent.putExtra("EventDate", eventList.get(position).getDate());
+//        intent.putExtra("EventTime", eventList.get(position).getDuration());
+//        // intent.putExtra("EventImageLink",eventList.get(position).getImageUrl().trim());
+//        intent.putExtra("EventOrganizer", eventList.get(position).getOrganizerName());
+//        startActivity(intent);
     }
 }

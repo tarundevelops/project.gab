@@ -13,7 +13,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".interviewsActivity"></activity>
         <activity android:name=".home_Activity" />
-        <activity android:name=".event_detail_activity" />
         <activity android:name=".create_Account" />
         <activity android:name=".podcast_Activity" />
         <activity android:name=".Login" />

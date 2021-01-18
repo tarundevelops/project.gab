@@ -1,11 +1,8 @@
 package com.example.graspandbloom;
 
-import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,13 +14,13 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
-    List<model> eventList;
+    List<PodcastModel> eventList;
     onItemClickListener clickListener;
 
 
 
 
-    public recyclerv(List<model> eventList, onItemClickListener clickListener) {
+    public recyclerv(List<PodcastModel> eventList, onItemClickListener clickListener) {
         this.eventList = eventList;
         this.clickListener = clickListener;
     }
@@ -37,16 +34,11 @@ public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull recyclerv.ViewHolder holder, int position) {
-        model event = eventList.get(position);
-//        holder.SpeakerName.setText(event.getSpeakerName());
-//        holder.eventName.setText(event.getEventName());
-        holder.date.setText(event.getDate());
-        holder.time.setText(event.getTime());
+        PodcastModel m = eventList.get(position);
+        holder.topic.setText(m.getTopic());
+        holder.date.setText(m.getDate());
 
-        holder.eventTitle.setText(event.getEventName());
-
-
-        Picasso.get().load(event.getImageUrl()).fit().into(holder.eventImage);
+       Picasso.get().load(m.getImageUrl()).fit().into(holder.Image);
 
     }
 
@@ -56,16 +48,16 @@ public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView eventName, SpeakerName, time, date, eventTitle;
+        TextView SpeakerName, time, date, topic;
 
-        ImageView eventImage;
+        ImageView Image;
         onItemClickListener clickListener;
         public ViewHolder(@NonNull View itemView, final onItemClickListener clickListener) {
             super(itemView);
             date = itemView.findViewById(R.id.enteredDate);
             time = itemView.findViewById(R.id.enteredTiming);
-            eventImage = itemView.findViewById(R.id.eventImg);
-            eventTitle = itemView.findViewById(R.id.EventTitle);
+            Image = itemView.findViewById(R.id.eventImg);
+            topic = itemView.findViewById(R.id.topic);
             this.clickListener = clickListener;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
