@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".interviewsActivity"></activity>
+        <activity android:name=".podcastPlayer"></activity>
+        <activity android:name=".interviewsActivity" />
         <activity android:name=".home_Activity" />
         <activity android:name=".create_Account" />
         <activity android:name=".podcast_Activity" />

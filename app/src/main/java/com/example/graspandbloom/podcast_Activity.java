@@ -30,7 +30,7 @@ import java.util.Objects;
 public class podcast_Activity extends AppCompatActivity implements recyclerv.onItemClickListener {
     private recyclerv adapter;
     private RecyclerView recyclerView;
-    private List<PodcastModel> podcastList = new ArrayList<>();
+    private static List<PodcastModel> podcastList = new ArrayList<>();
 
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawerLayout;
@@ -128,6 +128,11 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
         adapter.notifyDataSetChanged();
     }
 
+    public static List<PodcastModel> getPodcastList()
+    {
+        return podcastList;
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (toggle.onOptionsItemSelected(item)) {
@@ -138,14 +143,9 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
 
     @Override
     public void itemClick(int position) {
-//        Intent intent = new Intent(podcast_Activity.this, event_detail_activity.class);
-//        intent.putExtra("EventTopic", eventList.get(position).getTopic().trim());
-//        intent.putExtra("EventDescription", eventList.get(position).getEventDescription());
-//        intent.putExtra("EventSpeaker", eventList.get(position).getSpeakerName());
-//        intent.putExtra("EventDate", eventList.get(position).getDate());
-//        intent.putExtra("EventTime", eventList.get(position).getDuration());
-//        // intent.putExtra("EventImageLink",eventList.get(position).getImageUrl().trim());
-//        intent.putExtra("EventOrganizer", eventList.get(position).getOrganizerName());
-//        startActivity(intent);
+       Intent intent = new Intent(podcast_Activity.this, podcastPlayer.class);
+       intent.putExtra("index",position);
+
+       startActivity(intent);
     }
 }
