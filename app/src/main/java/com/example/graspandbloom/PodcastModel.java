@@ -3,7 +3,7 @@ public class PodcastModel {
     private String Topic;
     private String SpeakerName;
     private String date;
-    private String topicDescription;
+    private String aboutTopic;
     private String duration;
     private String imageUrl;
     private String audioUrl;
@@ -18,7 +18,7 @@ public class PodcastModel {
         this.Topic = topic;
         SpeakerName = speakerName;
         this.date = date;
-        this.topicDescription = topicDescription;
+        this.aboutTopic = topicDescription;
         this.duration = duration;
         this.imageUrl = imageUrl;
         this.audioUrl = audioUrl;
@@ -51,12 +51,12 @@ public class PodcastModel {
    }
 
 
-    public String getTopicDescription() {
-        return topicDescription;
+    public String getAboutTopic() {
+        return aboutTopic;
     }
 
-    public void setTopicDescription(String topicDescription) {
-        this.topicDescription = topicDescription;
+    public void setAboutTopic(String aboutTopic) {
+        this.aboutTopic = aboutTopic;
     }
 
 
