@@ -6,4 +6,7 @@
     <string name="Quotes">Quotesv</string>
     <string name="Drawer_open">Open</string>
     <string name="Drawer_close">Close</string>
+    <string name="duration">Duration :</string>
+    <string name="published">Published :</string>
+    <string name="Topic">Topic :</string>
 </resources>

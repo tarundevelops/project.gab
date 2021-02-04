@@ -1,40 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".podcastPlayer"
+    tools:context=".podcastPlayer">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
-<ImageView
-    android:id="@+id/podcastImage"
-    android:layout_width="match_parent"
-    android:layout_height="400dp"
-    android:padding="10dp"/>
+    <ImageView
+        android:id="@+id/podcastImage"
+        android:layout_width="match_parent"
+        android:layout_height="404dp"
+        android:padding="10dp" />
 
+
+    <SeekBar
+        android:id="@+id/seekBarID"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_gravity="center_horizontal"/>
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:enabled="false"
+        android:padding="5dp"
+        android:text="Start"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/inPlayerDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Duration"
+        android:layout_gravity="start"
+        android:layout_margin="10dp"
+        android:padding="10dp"/>
+    <TextView
+        android:id="@+id/inPlayerPublishDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Published"
+        android:layout_gravity="start"
+        android:layout_margin="10dp"
+        android:padding="10dp"/>
     <TextView
         android:id="@+id/podcastTopic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:textStyle="bold"
         android:text="Topic"
-        android:textSize="25sp"
-        android:textColor="@color/colorPrimaryDark"/>
-    <SeekBar
-        android:id="@+id/seekBarID"
-        android:padding="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"/>
+        android:layout_margin="10dp"
+        android:layout_gravity="start"/>
 
-
-    <Button
-        android:id="@+id/button"
-        android:padding="5dp"
-        android:layout_margin="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Play"/>
 </LinearLayout>
+</ScrollView>

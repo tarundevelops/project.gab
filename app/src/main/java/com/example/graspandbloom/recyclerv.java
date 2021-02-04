@@ -36,9 +36,7 @@ public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
     public void onBindViewHolder(@NonNull recyclerv.ViewHolder holder, int position) {
         PodcastModel m = eventList.get(position);
         holder.topic.setText(m.getTopic());
-        holder.date.setText(m.getDate());
-
-       Picasso.get().load(m.getImageUrl()).fit().into(holder.Image);
+        Picasso.get().load(m.getImageUrl()).fit().into(holder.Image);
 
     }
 
@@ -48,16 +46,14 @@ public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView SpeakerName, time, date, topic;
+        TextView topic;
 
         ImageView Image;
         onItemClickListener clickListener;
         public ViewHolder(@NonNull View itemView, final onItemClickListener clickListener) {
             super(itemView);
-            date = itemView.findViewById(R.id.enteredDate);
-            time = itemView.findViewById(R.id.enteredTiming);
             Image = itemView.findViewById(R.id.eventImg);
-            topic = itemView.findViewById(R.id.topic);
+            topic = itemView.findViewById(R.id.podcastTopicId);
             this.clickListener = clickListener;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
