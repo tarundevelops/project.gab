@@ -18,10 +18,20 @@
             android:text="Grasp And Bloom"
             android:textSize="38sp"
             android:layout_marginLeft="50dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/linear1"
+            android:orientation="vertical"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_below="@+id/appName">
         <EditText
             android:id="@+id/userFullName"
             android:layout_below="@+id/appName"
             android:layout_width="match_parent"
+            android:hint="Enter your name"
             android:layout_height="wrap_content"
             android:layout_marginTop="46dp"
             />
@@ -29,6 +39,7 @@
             android:id="@+id/userCityName"
             android:layout_below="@+id/userFullName"
             android:layout_width="match_parent"
+            android:hint="Enter your city"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             />
@@ -36,6 +47,7 @@
             android:id="@+id/userCountryName"
             android:layout_below="@+id/userCityName"
             android:layout_width="match_parent"
+            android:hint="Enter your country name"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             />
@@ -43,6 +55,7 @@
             android:id="@+id/userEmailAddress"
             android:layout_below="@+id/userCountryName"
             android:layout_width="match_parent"
+            android:hint="Enter your email address"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             />
@@ -50,6 +63,7 @@
             android:id="@+id/userAccountPassword"
             android:layout_below="@+id/userEmailAddress"
             android:layout_width="match_parent"
+            android:hint="Enter password"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             />
@@ -57,19 +71,23 @@
             android:id="@+id/userAccountConfirmPassword"
             android:layout_below="@+id/userAccountPassword"
             android:layout_width="match_parent"
+            android:hint="Confirm your password"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             />
-        <Button
-            android:id="@+id/confirmCreateAccountButton"
-            android:layout_below="@+id/userAccountConfirmPassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="120dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="15dp"
-            android:text="Create Account" />
+                <Button
+                    android:id="@+id/confirmCreateAccountButton"
+                    android:layout_below="@+id/userAccountConfirmPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="15dp"
+                    android:text="Create Account" />
+
+        </LinearLayout>
 
 
 </RelativeLayout>
