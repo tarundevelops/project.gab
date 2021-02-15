@@ -20,7 +20,7 @@ private Button loginButton;
         createAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Login.this, create_Account.class));
+                startActivity(new Intent(Login.this, email_verification.class));
 
             }
         });
