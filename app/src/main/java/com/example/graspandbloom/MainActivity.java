@@ -1,5 +1,6 @@
 package com.example.graspandbloom;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -143,6 +144,7 @@ private SignInButton start;
 
                         Intent i = new Intent(MainActivity.this,podcast_Activity.class);
                             startActivity(i);
+                            MainActivity.this.finish();
 
                         }
                     })

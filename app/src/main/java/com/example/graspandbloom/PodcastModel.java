@@ -1,5 +1,8 @@
 package com.example.graspandbloom;
-public class PodcastModel {
+
+import android.os.Parcelable;
+
+public class PodcastModel  {
     private String Topic;
     private String SpeakerName;
     private String date;

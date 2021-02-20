@@ -30,7 +30,7 @@ import java.util.Objects;
 public class podcast_Activity extends AppCompatActivity implements recyclerv.onItemClickListener {
     private recyclerv adapter;
     private RecyclerView recyclerView;
-    private static List<PodcastModel> podcastList = new ArrayList<>();
+    private static ArrayList<PodcastModel> podcastList = new ArrayList<>();
 
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawerLayout;
@@ -128,7 +128,7 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
         adapter.notifyDataSetChanged();
     }
 
-    public static List<PodcastModel> getPodcastList()
+    public static ArrayList<PodcastModel> getPodcastList()
     {
         return podcastList;
     }
