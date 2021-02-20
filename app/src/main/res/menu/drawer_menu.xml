@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item
-    android:id="@+id/Home"
-    android:title="Home"/>
     <item
-        android:id="@+id/liveEvents"
-        android:title="Upcoming Live Events"/>
+        android:id="@+id/Home"
+        android:title="Home"/>
+    <item
+        android:id="@+id/contactUs"
+        android:title="Contact Us"/>
     <item
         android:id="@+id/talks"
         android:title="Talks"/>

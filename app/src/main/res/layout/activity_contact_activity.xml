@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".contact_activity"
+    android:id="@+id/drawerLayout_CA">
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_1"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/colorPrimaryDark"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_below="@+id/toolbar_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Just Bloom"
+            android:textSize="36sp"
+            android:layout_marginTop="25dp"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You can ask your query through any one of the EMail"
+            android:textSize="22sp"
+            android:layout_below="@+id/tvName"
+            android:layout_marginTop="20sp"
+            android:layout_marginLeft="20sp"
+            android:layout_marginRight="20sp"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/tvMail1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="sr.tarun98@gmail.com"
+            android:textSize="20sp"
+            android:drawableEnd="@drawable/ic_baseline_mail_24"
+            android:layout_marginLeft="25sp"
+            android:layout_marginRight="25sp"
+            android:layout_marginTop="30sp"
+            android:layout_below="@+id/tvMessage"/>
+
+    </RelativeLayout>
+
+    <include layout="@layout/listview" />
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nv_1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:menu="@menu/drawer_menu"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true">
+        <Button
+            android:id="@+id/signout_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="10dp"
+            android:text="Sign out"/>
+    </com.google.android.material.navigation.NavigationView>
+
+
+</androidx.drawerlayout.widget.DrawerLayout>
