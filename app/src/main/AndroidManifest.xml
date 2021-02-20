@@ -12,14 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".email_verification"></activity>
+        <activity android:name=".contact_activity"></activity>
         <activity android:name=".podcastPlayer" />
         <activity android:name=".interviewsActivity" />
         <activity android:name=".home_Activity" />
         <activity android:name=".podcastPlayer" />
-        <activity android:name=".create_Account" />
         <activity android:name=".podcast_Activity" />
-        <activity android:name=".Login" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

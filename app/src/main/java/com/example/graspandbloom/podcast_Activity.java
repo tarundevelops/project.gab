@@ -70,7 +70,7 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
                 switch (item.getItemId()){
                     case R.id.Home: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
                         break;
-                    case R.id.liveEvents: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
+                    case R.id.contactUs: startActivity(new Intent(podcast_Activity.this, contact_activity.class));
                         break;
                     case R.id.talks: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
                         break;
