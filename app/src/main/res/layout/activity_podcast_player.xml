@@ -37,7 +37,22 @@
         android:padding="5dp"
         android:text="Start"
         android:layout_gravity="center_horizontal" />
-
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:text="Problem has occurred due to loss of internet connectivity. You may restart the media player."
+    android:textAlignment="center"
+    android:visibility="gone"
+    android:id="@+id/message"
+    />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tryagain"
+        android:text="Restart"
+        android:visibility="gone"
+/>
     <TextView
         android:id="@+id/inPlayerDuration"
         android:layout_width="wrap_content"
