@@ -2,6 +2,7 @@ package com.example.graspandbloom;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -15,9 +16,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -31,7 +38,7 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
     private recyclerv adapter;
     private RecyclerView recyclerView;
     private static ArrayList<PodcastModel> podcastList = new ArrayList<>();
-
+    private  GoogleSignInClient aacnt;
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawerLayout;
 
@@ -64,6 +71,7 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
 
         //View v = navigationView.inflateHeaderView(R.layout.drawerheader);
 
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -84,13 +92,12 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
         });
 
 
-
-
-
         signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(podcast_Activity.this, "ok", Toast.LENGTH_SHORT).show();
+                FirebaseAuth auth=FirebaseAuth.getInstance();
+                auth.signOut();
             }
         });
     }
@@ -148,4 +155,5 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
 
        startActivity(intent);
     }
+
 }
