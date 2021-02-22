@@ -53,8 +53,6 @@
             android:layout_below="@+id/tvMessage"/>
 
     </RelativeLayout>
-
-    <include layout="@layout/listview" />
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nv_1"
         android:layout_width="wrap_content"

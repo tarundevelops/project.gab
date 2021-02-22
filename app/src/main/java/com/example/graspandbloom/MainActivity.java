@@ -174,7 +174,7 @@ if (documentSnapshot.get("personEmail").equals(personEmail)){
 
                         MainActivity.this.finish();
                     }
-                    else {
+                    else if (c==0){
                     String personName = account.getDisplayName();
                     Uri img_uri = account.getPhotoUrl();
                     String uri = img_uri.toString();
