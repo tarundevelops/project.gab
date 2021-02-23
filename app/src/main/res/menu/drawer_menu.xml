@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/Home"
-        android:title="Home"/>
+        android:id="@+id/myAccount_id"
+        android:title="My Account" />
     <item
         android:id="@+id/contactUs"
         android:title="Contact Us"/>
-    <item
-        android:id="@+id/talks"
-        android:title="Talks"/>
-    <item
-        android:id="@+id/interviews"
-        android:title="Interviews"/>
+
     <item
         android:id="@+id/podcasts"
         android:title="Podcasts"/>
