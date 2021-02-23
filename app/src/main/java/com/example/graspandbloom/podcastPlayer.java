@@ -5,12 +5,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -67,8 +70,18 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
         builder=new AlertDialog.Builder(this);
         View view =getLayoutInflater().inflate(R.layout.media_player_loading,null);
         builder.setView(view);
-
         dialog=builder.create();
+        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+
+
+                if (i==4)
+                    podcastPlayer.this.finish();
+
+                return false;
+            }
+        });
         dialog.setCanceledOnTouchOutside(false);
 
 
@@ -445,6 +458,7 @@ if (c>4){
 
             seekBar.setProgress(mediaDuration);
         }
+
 synchronized (this) {
     seekBar.setProgress(0);
     setFlag(false);
@@ -453,9 +467,14 @@ synchronized (this) {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
-
-
-
+        if (mediaPlayer!=null){
+            mediaPlayer.pause();
+            button.setText("Start");
+        }
+    }
 
 }

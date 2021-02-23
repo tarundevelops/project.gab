@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
 
@@ -42,15 +43,14 @@ public class contact_activity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
-                    case R.id.Home: startActivity(new Intent(contact_activity.this, podcast_Activity.class));
+                    case R.id.myAccount_id: startActivity(new Intent(contact_activity.this, myAccount.class));
+                    contact_activity.this.finish();
                         break;
                     case R.id.contactUs: startActivity(new Intent(contact_activity.this, contact_activity.class));
-                        break;
-                    case R.id.talks: startActivity(new Intent(contact_activity.this, podcast_Activity.class));
-                        break;
-                    case R.id.interviews: startActivity(new Intent(contact_activity.this, podcast_Activity.class));
+                    contact_activity.this.finish();
                         break;
                     case R.id.podcasts: startActivity(new Intent(contact_activity.this, podcast_Activity.class));
+                    contact_activity.this.finish();
                         break;
                 }
                 return false;
@@ -65,6 +65,11 @@ public class contact_activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(contact_activity.this, "ok", Toast.LENGTH_SHORT).show();
+                FirebaseAuth auth=FirebaseAuth.getInstance();
+                auth.signOut();
+                Intent i = new Intent(contact_activity.this,MainActivity.class);
+                startActivity(i);
+                contact_activity.this.finish();
             }
         });
     }

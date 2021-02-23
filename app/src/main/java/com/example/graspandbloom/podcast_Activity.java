@@ -38,7 +38,6 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
     private recyclerv adapter;
     private RecyclerView recyclerView;
     private static ArrayList<PodcastModel> podcastList = new ArrayList<>();
-    private  GoogleSignInClient aacnt;
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawerLayout;
 
@@ -76,15 +75,14 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
-                    case R.id.Home: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
+                    case R.id.myAccount_id: startActivity(new Intent(podcast_Activity.this, myAccount.class));
+                    podcast_Activity.this.finish();
                         break;
                     case R.id.contactUs: startActivity(new Intent(podcast_Activity.this, contact_activity.class));
-                        break;
-                    case R.id.talks: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
-                        break;
-                    case R.id.interviews: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
+                    podcast_Activity.this.finish();
                         break;
                     case R.id.podcasts: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
+                    podcast_Activity.this.finish();
                         break;
                 }
                 return false;
@@ -98,6 +96,9 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
                 Toast.makeText(podcast_Activity.this, "ok", Toast.LENGTH_SHORT).show();
                 FirebaseAuth auth=FirebaseAuth.getInstance();
                 auth.signOut();
+                Intent i = new Intent(podcast_Activity.this,MainActivity.class);
+                startActivity(i);
+                podcast_Activity.this.finish();
             }
         });
     }
