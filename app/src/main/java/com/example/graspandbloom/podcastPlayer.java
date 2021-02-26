@@ -1,11 +1,13 @@
 package com.example.graspandbloom;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -21,20 +23,33 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 
 public class podcastPlayer extends AppCompatActivity implements Runnable {
     public static MediaPlayer mediaPlayer;
-    public static Button button;
+    public static Button button,likeButton;
     private Button restartPlayer;
     private static SeekBar seekBar;
     private ArrayList<PodcastModel> list;
     private ImageView image;
-    private TextView topic, duration, publishDate,message;
+    private TextView topic, duration, publishDate,message,listenedby,likedBy;
+    private static TextView timeLeft;
     private Thread thread;
     private static boolean Flag = false;
     public static int mediaDuration;
@@ -45,12 +60,19 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
     private int mediaRestartduration;
     private boolean restartMediaCheck=false;
     private int index;
+    private FirebaseFirestore db=FirebaseFirestore.getInstance();
+    private FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
 
     private boolean previousState=false;
     private boolean ready=false;
 
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
+
+    private boolean likeCheck=false;
+    private ArrayList<String> newList;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +88,11 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
         topic = findViewById(R.id.podcastTopic);
         duration = findViewById(R.id.inPlayerDuration);
         publishDate = findViewById(R.id.inPlayerPublishDate);
+        listenedby=findViewById(R.id.podcastListnedBy);
+        timeLeft=findViewById(R.id.timeleft);
+        likeButton=findViewById(R.id.like);
+        likedBy=findViewById(R.id.podcastLikedBy);
+
         final Bundle bundle = getIntent().getExtras();
         builder=new AlertDialog.Builder(this);
         View view =getLayoutInflater().inflate(R.layout.media_player_loading,null);
@@ -76,8 +103,9 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
             public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
 
 
-                if (i==4)
+                if (i==4){
                     podcastPlayer.this.finish();
+                dialog.dismiss();}
 
                 return false;
             }
@@ -183,12 +211,20 @@ runOnUiThread(new Runnable() {
      index=bundle.getInt("index");
 
             list = podcast_Activity.getPodcastList();
+            newList=list.get(index).getLikedBy();
 
 
             duration.setText(getString(R.string.duration) + list.get(index).getDuration());
             publishDate.setText(getString(R.string.published) + list.get(index).getDate());
             topic.setText(getString(R.string.Topic)+list.get(index).getTopic());
+            listenedby.setText("ListnedBy :"+list.get(index).getListenedBy().size());
+            likedBy.setText("Liked by :"+newList.size());
             Picasso.get().load(list.get(index).getImageUrl()).into(image);
+
+            if (newList.contains(user.getUid())){
+                likeCheck=true;
+                likeButton.setBackgroundColor(Color.RED);
+            }
 
 setMediaPlayer();
 
@@ -271,8 +307,7 @@ setMediaPlayer();
 
                             mediaPlayer.start();
                             button.setText("Pause");
-
-
+                            listened();
                             if (getFlag()!=true && thread == null) {
                                 setFlag(true);
                                 thread = new Thread(new podcastPlayer());
@@ -439,6 +474,12 @@ int c=0;
         while (mediaPlayer.getCurrentPosition()<mediaDuration  && getFlag()){
                 Log.d("Buffer check", "onPrepared: "+buffer + " "+mediaPlayer.getCurrentPosition()+" "+(buffer/(double)100)*mediaDuration + " "+(((buffer!=(byte)100))&&((int)((mediaPlayer.getCurrentPosition()*0.001)+5)>(int)(((buffer/(double)100)*mediaDuration)*0.001))));
                 seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        timeLeft.setText(((mediaDuration-mediaPlayer.getCurrentPosition())/60000 )+":"+((mediaDuration-mediaPlayer.getCurrentPosition())%60000)/1000);
+                    }
+        });
                 if ((int)(mediaPlayer.getCurrentPosition()*0.001) == (int)(mediaDuration*0.001)) {
 
 if (c>4){
@@ -476,5 +517,136 @@ synchronized (this) {
             button.setText("Start");
         }
     }
+    public void listened(){
 
+      if (!list.get(index).getListenedBy().contains(user.getUid()))
+        {
+
+
+            db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if (error==null){
+                        if (value!=null){
+                            if (!value.isEmpty()) {
+                                for (QueryDocumentSnapshot documentSnapshot:value) {
+                                    ArrayList<String> newList=list.get(index).getListenedBy();
+                                    newList.add(user.getUid());
+                                    HashSet<String> hs=new HashSet<>(newList);
+                                    Map<String,Object> ud=new HashMap<>();
+                                    ud.put("listenedBy",new ArrayList<>(hs));
+                                    db.collection("podcast").document(documentSnapshot.getId()).update(ud);
+}                            }
+                        }
+                    }
+                }
+            });
+
+        }
+
+    }
+
+    public void setLikeButton(View view) {
+        final Map<String,Object> ud=new HashMap<>();
+        final boolean[] check = {false};
+
+
+        final ArrayList<QueryDocumentSnapshot> d=new ArrayList<>();
+
+if (likeCheck){
+
+
+    db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+            if (error==null){
+                if (value!=null){
+                    if (!value.isEmpty()) {
+                        for (QueryDocumentSnapshot documentSnapshot:value) {
+
+                            if (newList.contains(user.getUid()))
+                                newList.remove(user.getUid());
+
+
+                            d.add(documentSnapshot);
+
+                            break;
+                        }
+                        if (!check[0]){
+                            HashSet<String> hs=new HashSet<>(newList);
+
+
+                            ud.put("likedBy",new ArrayList<>(hs));
+                        db.collection("podcast").document(d.get(0).getId()).update(ud).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                    likeCheck=false;
+                                    check[0] =true;
+
+                                    likeButton.setBackgroundColor(Color.WHITE);
+                                    d.clear();
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });}
+                    }
+                }
+            }
+        }
+    });
+}else{
+
+
+    db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+            if (error==null){
+                if (value!=null){
+                    if (!value.isEmpty()) {
+                        for (QueryDocumentSnapshot documentSnapshot:value) {
+
+                            if (!newList.contains(user.getUid()))
+                                newList.add(user.getUid());
+
+                            d.add(documentSnapshot);
+
+                            break;
+                        }
+                        if (!check[0]){
+                            HashSet<String> hs=new HashSet<>(newList);
+
+
+                            ud.put("likedBy",new ArrayList<>(hs));
+                        db.collection("podcast").document(d.get(0).getId()).update(ud).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                    likeCheck=true;
+                                    check[0] =true;
+
+                                    likeButton.setBackgroundColor(Color.RED);
+                                    d.clear();
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });}
+                    }
+                }
+            }
+        }
+    });
+}
+
+    }
 }

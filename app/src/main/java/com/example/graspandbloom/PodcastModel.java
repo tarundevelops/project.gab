@@ -1,6 +1,8 @@
 package com.example.graspandbloom;
 
 
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class PodcastModel  {
     private String Topic;
@@ -10,8 +12,28 @@ public class PodcastModel  {
     private String duration;
     private String imageUrl;
     private String audioUrl;
+    private ArrayList<String> listenedBy;
+    private ArrayList<String> likedBy;
 
 
+    public ArrayList<String> getListenedBy() {
+
+       HashSet<String> filter= new HashSet<String>(listenedBy);
+       return new ArrayList<String>(filter);
+    }
+
+    public void setListenedBy(ArrayList<String> listenedBy) {
+        this.listenedBy = listenedBy;
+    }
+
+    public ArrayList<String> getLikedBy() {
+        HashSet<String> filter =new HashSet<>(likedBy);
+        return new ArrayList<>(likedBy);
+    }
+
+    public void setLikedBy(ArrayList<String> likedBy) {
+        this.likedBy = likedBy;
+    }
 
     public PodcastModel() {
     }
