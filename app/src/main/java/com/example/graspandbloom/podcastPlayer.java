@@ -72,6 +72,9 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
     private boolean likeCheck=false;
     private ArrayList<String> newList;
 
+    private static int listenedByCount;
+    private static int LikedByCount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,20 +214,16 @@ runOnUiThread(new Runnable() {
      index=bundle.getInt("index");
 
             list = podcast_Activity.getPodcastList();
-            newList=list.get(index).getLikedBy();
 
 
             duration.setText(getString(R.string.duration) + list.get(index).getDuration());
             publishDate.setText(getString(R.string.published) + list.get(index).getDate());
             topic.setText(getString(R.string.Topic)+list.get(index).getTopic());
-            listenedby.setText("ListnedBy :"+list.get(index).getListenedBy().size());
-            likedBy.setText("Liked by :"+newList.size());
+            listenedby.setText("ListnedBy :"+getListenedBy());
+            likedBy.setText("Liked by :"+getLikedBy());
             Picasso.get().load(list.get(index).getImageUrl()).into(image);
 
-            if (newList.contains(user.getUid())){
-                likeCheck=true;
-                likeButton.setBackgroundColor(Color.RED);
-            }
+
 
 setMediaPlayer();
 
@@ -519,8 +518,6 @@ synchronized (this) {
     }
     public void listened(){
 
-      if (!list.get(index).getListenedBy().contains(user.getUid()))
-        {
 
 
             db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -530,19 +527,19 @@ synchronized (this) {
                         if (value!=null){
                             if (!value.isEmpty()) {
                                 for (QueryDocumentSnapshot documentSnapshot:value) {
-                                    ArrayList<String> newList=list.get(index).getListenedBy();
-                                    newList.add(user.getUid());
-                                    HashSet<String> hs=new HashSet<>(newList);
+//                                    ArrayList<String> newList=list.get(index).getListenedBy();
+//                                    newList.add(user.getUid());
+//                                    HashSet<String> hs=new HashSet<>(newList);
                                     Map<String,Object> ud=new HashMap<>();
-                                    ud.put("listenedBy",new ArrayList<>(hs));
-                                    db.collection("podcast").document(documentSnapshot.getId()).update(ud);
+                                    ud.put("i",true);
+                                    db.collection("podcast").document(documentSnapshot.getId()).collection("ListenedBy").document(user.getUid()).set(ud);
 }                            }
                         }
                     }
                 }
             });
 
-        }
+
 
     }
 
@@ -565,20 +562,17 @@ if (likeCheck){
                     if (!value.isEmpty()) {
                         for (QueryDocumentSnapshot documentSnapshot:value) {
 
-                            if (newList.contains(user.getUid()))
-                                newList.remove(user.getUid());
-
 
                             d.add(documentSnapshot);
 
                             break;
                         }
                         if (!check[0]){
-                            HashSet<String> hs=new HashSet<>(newList);
 
 
-                            ud.put("likedBy",new ArrayList<>(hs));
-                        db.collection("podcast").document(d.get(0).getId()).update(ud).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                            ud.put("i",true);
+                        db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").document(user.getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
 
@@ -612,19 +606,16 @@ if (likeCheck){
                     if (!value.isEmpty()) {
                         for (QueryDocumentSnapshot documentSnapshot:value) {
 
-                            if (!newList.contains(user.getUid()))
-                                newList.add(user.getUid());
 
                             d.add(documentSnapshot);
 
                             break;
                         }
                         if (!check[0]){
-                            HashSet<String> hs=new HashSet<>(newList);
 
 
-                            ud.put("likedBy",new ArrayList<>(hs));
-                        db.collection("podcast").document(d.get(0).getId()).update(ud).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            ud.put("i",true);
+                        db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").document(user.getUid()).set(ud).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
 
@@ -649,4 +640,104 @@ if (likeCheck){
 }
 
     }
+    public int getLikedBy(){
+        final boolean[] check = {false};
+
+
+        final ArrayList<QueryDocumentSnapshot> d=new ArrayList<>();
+
+
+
+
+            db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                    if (error==null){
+                        if (value!=null){
+                            if (!value.isEmpty()) {
+                                for (QueryDocumentSnapshot documentSnapshot:value) {
+
+
+                                    d.add(documentSnapshot);
+
+                                    break;
+                                }
+                                if (!check[0]){
+
+
+
+
+                                    db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            check[0]=true;
+                                            for (QueryDocumentSnapshot document:queryDocumentSnapshots){
+                                                if (document.getId().equals(user.getUid())){
+                                                    likeCheck=true;
+
+
+                                                    likeButton.setBackgroundColor(Color.RED);
+
+                                                }
+
+
+                                            }
+                                            LikedByCount=queryDocumentSnapshots.size();
+                                        }
+                                    });}
+                            }
+                        }
+                    }
+                }
+            });
+        d.clear();
+        return LikedByCount;
+    }
+    public int getListenedBy(){
+        final boolean[] check = {false};
+
+
+        final ArrayList<QueryDocumentSnapshot> d=new ArrayList<>();
+
+
+
+
+        db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                if (error==null){
+                    if (value!=null){
+                        if (!value.isEmpty()) {
+                            for (QueryDocumentSnapshot documentSnapshot:value) {
+
+
+                                d.add(documentSnapshot);
+
+                                break;
+                            }
+                            if (!check[0]){
+
+
+
+
+                                db.collection("podcast").document(d.get(0).getId()).collection("ListenedBy").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        check[0]=true;
+
+
+                                        listenedByCount=queryDocumentSnapshots.size();
+                                    }
+                                });}
+                        }
+                    }
+                }
+            }
+        });
+        d.clear();
+        return listenedByCount;
+    }
+
 }

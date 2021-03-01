@@ -15,9 +15,6 @@
         <activity android:name=".myAccount"></activity>
         <activity android:name=".contact_activity" />
         <activity android:name=".podcastPlayer" />
-        <activity android:name=".interviewsActivity" />
-        <activity android:name=".home_Activity" />
-        <activity android:name=".podcastPlayer" />
         <activity android:name=".podcast_Activity" />
         <activity android:name=".MainActivity">
             <intent-filter>

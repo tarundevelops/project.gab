@@ -72,9 +72,64 @@ private SignInButton start;
 
         if(FirebaseAuth.getInstance().getCurrentUser()!=null)
         {
-            Intent i = new Intent(MainActivity.this,podcast_Activity.class);
-            startActivity(i);
-            this.finish();
+            final FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+            final String personEmail = user.getEmail();
+            db.collection("UserDetails").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    int c=0;
+                    for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots) {
+                        if (documentSnapshot.get("personEmail")!=null){
+                            if (documentSnapshot.get("personEmail").equals(personEmail)){
+                                c++;
+                            }}
+                    }
+                    if (c==1){
+                        Intent i = new Intent(MainActivity.this,podcast_Activity.class);
+                        startActivity(i);
+
+                        MainActivity.this.finish();
+                    }
+                    else if (c==0){
+                        String personName = user.getDisplayName();
+                        Uri img_uri = user.getPhotoUrl();
+                        String uri = img_uri.toString();
+                        String personUid = user.getUid();
+                        Map<String, String> newUser = new HashMap<>();
+                        newUser.put("personName",personName);
+                        newUser.put("personEmail",personEmail);
+                        newUser.put("personUid",personUid);
+                        newUser.put("img_uri",uri);
+
+
+                        db.collection("UserDetails")
+                                .add(newUser)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Intent i = new Intent(MainActivity.this,podcast_Activity.class);
+                                        startActivity(i);
+
+                                        MainActivity.this.finish();
+
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+
+                                    }
+                                });}
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            });
+
+
+
         }
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -179,11 +234,11 @@ if (documentSnapshot.get("personEmail").equals(personEmail)){
                     String personName = account.getDisplayName();
                     Uri img_uri = account.getPhotoUrl();
                     String uri = img_uri.toString();
-                    String personId = account.getId();
+                    String personUid = user.getUid();
                     Map<String, String> newUser = new HashMap<>();
                     newUser.put("personName",personName);
                     newUser.put("personEmail",personEmail);
-                    newUser.put("personId",personId);
+                    newUser.put("personUid",personUid);
                     newUser.put("img_uri",uri);
 
 
