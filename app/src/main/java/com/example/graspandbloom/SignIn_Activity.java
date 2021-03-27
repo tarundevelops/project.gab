@@ -1,6 +1,5 @@
 package com.example.graspandbloom;
 
-import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -11,9 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -33,15 +30,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 
 public class SignIn_Activity extends AppCompatActivity {
@@ -50,7 +44,6 @@ public class SignIn_Activity extends AppCompatActivity {
     private String TAG ="MainActivity";
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    String user_id;
     private int RC_SIGN_IN = 1;
     AlertDialog.Builder builder;
     AlertDialog dialog;

@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -32,12 +31,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 
@@ -56,7 +55,6 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
     public static byte buffer;
     public boolean internetCheck=true;
     private boolean firstCheck=false;
-    private boolean whileCheck;
     private int mediaRestartduration;
     private boolean restartMediaCheck=false;
     private int index;
@@ -70,7 +68,6 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
     private AlertDialog dialog;
 
     private boolean likeCheck=false;
-    private ArrayList<String> newList;
 
     private static int listenedByCount;
     private static int LikedByCount;
@@ -143,11 +140,10 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
                             Thread.yield();
                             wait(1);
                         } catch (InterruptedException e) {
-                            //  e.printStackTrace();
+
                         }
                     }}}
 mediaPlayer.pause();
-//mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer=null;
 
@@ -159,14 +155,6 @@ mediaPlayer.pause();
         }    }
         });
 
-
-//        SharedPreferences sd=getSharedPreferences("1",MODE_PRIVATE);
-//        SharedPreferences.Editor edit=sd.edit();
-//        edit.remove("index");
-//        edit.remove("at");
-//        edit.remove("check");
-//        edit.clear();
-//        edit.apply();
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N) {
             cm.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback(){
@@ -219,8 +207,8 @@ runOnUiThread(new Runnable() {
             duration.setText(getString(R.string.duration) + list.get(index).getDuration());
             publishDate.setText(getString(R.string.published) + list.get(index).getDate());
             topic.setText(getString(R.string.Topic)+list.get(index).getTopic());
-            listenedby.setText("ListnedBy :"+getListenedBy());
-            likedBy.setText("Liked by :"+getLikedBy());
+            getListenedBy();
+            getLikedBy();
             Picasso.get().load(list.get(index).getImageUrl()).into(image);
 
 
@@ -291,7 +279,6 @@ setMediaPlayer();
        final  MediaPlayer.OnPreparedListener preparedListener = new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(final MediaPlayer mediaPlayer) {
-                Toast.makeText(podcastPlayer.this, ""+"reachedOnPrepared", Toast.LENGTH_SHORT).show();
                 mediaDuration = mediaPlayer.getDuration();
                 seekBar.setMax(mediaDuration);
                 button.setOnClickListener(new View.OnClickListener() {
@@ -307,11 +294,11 @@ setMediaPlayer();
                             mediaPlayer.start();
                             button.setText("Pause");
                             listened();
-                            if (getFlag()!=true && thread == null) {
+                            if (!getFlag() && thread == null) {
                                 setFlag(true);
                                 thread = new Thread(new podcastPlayer());
                                 thread.start();
-                            }else if(getFlag()!=true && thread!=null && thread.getState() == Thread.State.TERMINATED  ) {
+                            }else if(!getFlag() && thread!=null && thread.getState() == Thread.State.TERMINATED  ) {
                                 setFlag(true);
                                 thread = new Thread(new podcastPlayer());
                                 thread.start();
@@ -334,11 +321,11 @@ message.setVisibility(View.GONE);}
                         button.setText("Pause");
 
 
-                        if (getFlag()!=true && thread == null) {
+                        if (!getFlag() && thread == null) {
                             setFlag(true);
                             thread = new Thread(new podcastPlayer());
                             thread.start();
-                        }else if(getFlag()!=true && thread!=null && thread.getState() == Thread.State.TERMINATED  ) {
+                        }else if(!getFlag() && thread!=null && thread.getState() == Thread.State.TERMINATED  ) {
                             setFlag(true);
                             thread = new Thread(new podcastPlayer());
                             thread.start();
@@ -372,7 +359,6 @@ message.setVisibility(View.GONE);}
 
         });
         mediaPlayer.setOnPreparedListener(preparedListener);
-        //      button.setEnabled(true);
         mediaPlayer.prepareAsync();
 
         mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
@@ -381,21 +367,6 @@ message.setVisibility(View.GONE);}
             public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
                 seekBar.setSecondaryProgress((int) ((i/(double)100)*mediaPlayer.getDuration()));
                 buffer= (byte) i;
-//                  if(!internetCheck){
-//                      while (!internetCheck){
-//                          if((i!=100) &&(( (int)(mediaPlayer.getCurrentPosition()*0.001))>=((int)(((buffer/(double)100)*mediaDuration)*0.001)))){
-//                              int rP =mediaPlayer.getCurrentPosition();
-//                          }
-//                          synchronized (this){
-//                              try {
-//                                  wait(1);
-//                              } catch (InterruptedException e) {
-//
-//                              }
-//
-//                          }
-//                      }
-//                  }
             }
 
         });
@@ -454,9 +425,9 @@ notifyAll();
      public void run() {
 
         synchronized (this){
-while(getFlag() != true){
+while(!getFlag()){
     try {
-     //   Log.d("currentPosition3", "onClick: " + "ok" + getFlag());
+
         wait(1);
     } catch (InterruptedException e) {
         Toast.makeText(this, "Error occured", Toast.LENGTH_SHORT).show();
@@ -471,11 +442,11 @@ while(getFlag() != true){
 int c=0;
 
         while (mediaPlayer.getCurrentPosition()<mediaDuration  && getFlag()){
-                Log.d("Buffer check", "onPrepared: "+buffer + " "+mediaPlayer.getCurrentPosition()+" "+(buffer/(double)100)*mediaDuration + " "+(((buffer!=(byte)100))&&((int)((mediaPlayer.getCurrentPosition()*0.001)+5)>(int)(((buffer/(double)100)*mediaDuration)*0.001))));
                 seekBar.setProgress(mediaPlayer.getCurrentPosition());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (mediaPlayer!=null)
                         timeLeft.setText(((mediaDuration-mediaPlayer.getCurrentPosition())/60000 )+":"+((mediaDuration-mediaPlayer.getCurrentPosition())%60000)/1000);
                     }
         });
@@ -527,12 +498,14 @@ synchronized (this) {
                         if (value!=null){
                             if (!value.isEmpty()) {
                                 for (QueryDocumentSnapshot documentSnapshot:value) {
-//                                    ArrayList<String> newList=list.get(index).getListenedBy();
-//                                    newList.add(user.getUid());
-//                                    HashSet<String> hs=new HashSet<>(newList);
                                     Map<String,Object> ud=new HashMap<>();
                                     ud.put("i",true);
-                                    db.collection("podcast").document(documentSnapshot.getId()).collection("ListenedBy").document(user.getUid()).set(ud);
+                                    db.collection("podcast").document(documentSnapshot.getId()).collection("ListenedBy").document(user.getUid()).set(ud).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            getListenedBy();
+                                        }
+                                    });
 }                            }
                         }
                     }
@@ -582,6 +555,8 @@ if (likeCheck){
                                     likeButton.setBackgroundColor(Color.WHITE);
                                     d.clear();
 
+                                    getLikedBy();
+
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -625,6 +600,7 @@ if (likeCheck){
                                     likeButton.setBackgroundColor(Color.RED);
                                     d.clear();
 
+                                    getLikedBy();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -640,7 +616,7 @@ if (likeCheck){
 }
 
     }
-    public int getLikedBy(){
+    public void getLikedBy(){
         final boolean[] check = {false};
 
 
@@ -667,8 +643,8 @@ if (likeCheck){
 
 
 
-
-                                    db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    Source source =Source.SERVER;
+                                    db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").get(source).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                         @Override
                                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                             check[0]=true;
@@ -684,17 +660,23 @@ if (likeCheck){
 
                                             }
                                             LikedByCount=queryDocumentSnapshots.size();
+                                            likedBy.setText(getString(R.string.likedby)+LikedByCount);
+
+
+                                            d.clear();
                                         }
-                                    });}
+                                    });
+
+
+                                }
                             }
                         }
                     }
                 }
             });
-        d.clear();
-        return LikedByCount;
+
     }
-    public int getListenedBy(){
+    public void getListenedBy(){
         final boolean[] check = {false};
 
 
@@ -719,25 +701,28 @@ if (likeCheck){
                             }
                             if (!check[0]){
 
+                                Source source=Source.SERVER;
 
-
-
-                                db.collection("podcast").document(d.get(0).getId()).collection("ListenedBy").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                db.collection("podcast").document(d.get(0).getId()).collection("ListenedBy").get(source).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                         check[0]=true;
 
 
                                         listenedByCount=queryDocumentSnapshots.size();
+                                        listenedby.setText(getString(R.string.listenedby)+listenedByCount);
+
+                                        d.clear();
                                     }
-                                });}
+                                });
+
+                            }
                         }
                     }
                 }
             }
         });
-        d.clear();
-        return listenedByCount;
+
     }
 
 }
