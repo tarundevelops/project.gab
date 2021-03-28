@@ -5,11 +5,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,15 +21,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class myAccount extends AppCompatActivity {
@@ -130,13 +124,13 @@ ImageView userImage;
                                         auth.signOut();
                                         Intent i = new Intent(myAccount.this,MainActivity.class);
                                         startActivity(i);
-                                        Toast.makeText(myAccount.this, ""+currentuser.getEmail(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(myAccount.this, "Account deleted successfully", Toast.LENGTH_SHORT).show();
                                         myAccount.this.finish();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-
+                                        Toast.makeText(myAccount.this, "Failed to delete account. \n Please restart the app and try again to delete account.", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -144,6 +138,7 @@ ImageView userImage;
                             @Override
                             public void onFailure(@NonNull Exception e) {
 
+                                Toast.makeText(myAccount.this, "Failed to delete account. \n Please try again.", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -152,7 +147,7 @@ ImageView userImage;
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                Toast.makeText(myAccount.this, "Failed to delete account. \n Please try again.", Toast.LENGTH_SHORT).show();
             }
         });
 

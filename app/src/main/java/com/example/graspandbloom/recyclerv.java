@@ -28,17 +28,24 @@ public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
     @NonNull
     @Override
     public recyclerv.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.itemview, parent, false);
-        return new ViewHolder(view, clickListener);
+        View view =null;
+
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.itemview, parent, false);
+            return new ViewHolder(view, clickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull recyclerv.ViewHolder holder, int position) {
+
         PodcastModel m = eventList.get(position);
         holder.topic.setText(m.getTopic());
         Picasso.get().load(m.getImageUrl()).fit().into(holder.Image);
 
+
+
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -50,11 +57,14 @@ public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
 
         ImageView Image;
         onItemClickListener clickListener;
+
         public ViewHolder(@NonNull View itemView, final onItemClickListener clickListener) {
             super(itemView);
             Image = itemView.findViewById(R.id.eventImg);
             topic = itemView.findViewById(R.id.podcastTopicId);
             this.clickListener = clickListener;
+
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

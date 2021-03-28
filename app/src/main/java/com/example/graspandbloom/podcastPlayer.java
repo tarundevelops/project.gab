@@ -1,12 +1,13 @@
 package com.example.graspandbloom;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.media.Image;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -21,36 +22,57 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class podcastPlayer extends AppCompatActivity implements Runnable {
     public static MediaPlayer mediaPlayer;
-    public static Button button;
+    public static Button button,likeButton;
     private Button restartPlayer;
     private static SeekBar seekBar;
     private ArrayList<PodcastModel> list;
     private ImageView image;
-    private TextView topic, duration, publishDate,message;
+    private TextView topic, duration, publishDate,message,listenedby,likedBy;
+    private static TextView timeLeft;
     private Thread thread;
     private static boolean Flag = false;
     public static int mediaDuration;
     public static byte buffer;
     public boolean internetCheck=true;
     private boolean firstCheck=false;
-    private boolean whileCheck;
     private int mediaRestartduration;
     private boolean restartMediaCheck=false;
     private int index;
+    private FirebaseFirestore db=FirebaseFirestore.getInstance();
+    private FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
 
     private boolean previousState=false;
     private boolean ready=false;
 
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
+
+    private boolean likeCheck=false;
+
+    private static int listenedByCount;
+    private static int LikedByCount;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +88,11 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
         topic = findViewById(R.id.podcastTopic);
         duration = findViewById(R.id.inPlayerDuration);
         publishDate = findViewById(R.id.inPlayerPublishDate);
+        listenedby=findViewById(R.id.podcastListnedBy);
+        timeLeft=findViewById(R.id.timeleft);
+        likeButton=findViewById(R.id.like);
+        likedBy=findViewById(R.id.podcastLikedBy);
+
         final Bundle bundle = getIntent().getExtras();
         builder=new AlertDialog.Builder(this);
         View view =getLayoutInflater().inflate(R.layout.media_player_loading,null);
@@ -76,8 +103,9 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
             public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
 
 
-                if (i==4)
+                if (i==4){
                     podcastPlayer.this.finish();
+                dialog.dismiss();}
 
                 return false;
             }
@@ -112,11 +140,10 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
                             Thread.yield();
                             wait(1);
                         } catch (InterruptedException e) {
-                            //  e.printStackTrace();
+
                         }
                     }}}
 mediaPlayer.pause();
-//mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer=null;
 
@@ -128,14 +155,6 @@ mediaPlayer.pause();
         }    }
         });
 
-
-//        SharedPreferences sd=getSharedPreferences("1",MODE_PRIVATE);
-//        SharedPreferences.Editor edit=sd.edit();
-//        edit.remove("index");
-//        edit.remove("at");
-//        edit.remove("check");
-//        edit.clear();
-//        edit.apply();
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N) {
             cm.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback(){
@@ -188,7 +207,11 @@ runOnUiThread(new Runnable() {
             duration.setText(getString(R.string.duration) + list.get(index).getDuration());
             publishDate.setText(getString(R.string.published) + list.get(index).getDate());
             topic.setText(getString(R.string.Topic)+list.get(index).getTopic());
+            getListenedBy();
+            getLikedBy();
             Picasso.get().load(list.get(index).getImageUrl()).into(image);
+
+
 
 setMediaPlayer();
 
@@ -256,7 +279,6 @@ setMediaPlayer();
        final  MediaPlayer.OnPreparedListener preparedListener = new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(final MediaPlayer mediaPlayer) {
-                Toast.makeText(podcastPlayer.this, ""+"reachedOnPrepared", Toast.LENGTH_SHORT).show();
                 mediaDuration = mediaPlayer.getDuration();
                 seekBar.setMax(mediaDuration);
                 button.setOnClickListener(new View.OnClickListener() {
@@ -271,13 +293,12 @@ setMediaPlayer();
 
                             mediaPlayer.start();
                             button.setText("Pause");
-
-
-                            if (getFlag()!=true && thread == null) {
+                            listened();
+                            if (!getFlag() && thread == null) {
                                 setFlag(true);
                                 thread = new Thread(new podcastPlayer());
                                 thread.start();
-                            }else if(getFlag()!=true && thread!=null && thread.getState() == Thread.State.TERMINATED  ) {
+                            }else if(!getFlag() && thread!=null && thread.getState() == Thread.State.TERMINATED  ) {
                                 setFlag(true);
                                 thread = new Thread(new podcastPlayer());
                                 thread.start();
@@ -300,11 +321,11 @@ message.setVisibility(View.GONE);}
                         button.setText("Pause");
 
 
-                        if (getFlag()!=true && thread == null) {
+                        if (!getFlag() && thread == null) {
                             setFlag(true);
                             thread = new Thread(new podcastPlayer());
                             thread.start();
-                        }else if(getFlag()!=true && thread!=null && thread.getState() == Thread.State.TERMINATED  ) {
+                        }else if(!getFlag() && thread!=null && thread.getState() == Thread.State.TERMINATED  ) {
                             setFlag(true);
                             thread = new Thread(new podcastPlayer());
                             thread.start();
@@ -338,7 +359,6 @@ message.setVisibility(View.GONE);}
 
         });
         mediaPlayer.setOnPreparedListener(preparedListener);
-        //      button.setEnabled(true);
         mediaPlayer.prepareAsync();
 
         mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
@@ -347,21 +367,6 @@ message.setVisibility(View.GONE);}
             public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
                 seekBar.setSecondaryProgress((int) ((i/(double)100)*mediaPlayer.getDuration()));
                 buffer= (byte) i;
-//                  if(!internetCheck){
-//                      while (!internetCheck){
-//                          if((i!=100) &&(( (int)(mediaPlayer.getCurrentPosition()*0.001))>=((int)(((buffer/(double)100)*mediaDuration)*0.001)))){
-//                              int rP =mediaPlayer.getCurrentPosition();
-//                          }
-//                          synchronized (this){
-//                              try {
-//                                  wait(1);
-//                              } catch (InterruptedException e) {
-//
-//                              }
-//
-//                          }
-//                      }
-//                  }
             }
 
         });
@@ -420,9 +425,9 @@ notifyAll();
      public void run() {
 
         synchronized (this){
-while(getFlag() != true){
+while(!getFlag()){
     try {
-     //   Log.d("currentPosition3", "onClick: " + "ok" + getFlag());
+
         wait(1);
     } catch (InterruptedException e) {
         Toast.makeText(this, "Error occured", Toast.LENGTH_SHORT).show();
@@ -437,8 +442,14 @@ while(getFlag() != true){
 int c=0;
 
         while (mediaPlayer.getCurrentPosition()<mediaDuration  && getFlag()){
-                Log.d("Buffer check", "onPrepared: "+buffer + " "+mediaPlayer.getCurrentPosition()+" "+(buffer/(double)100)*mediaDuration + " "+(((buffer!=(byte)100))&&((int)((mediaPlayer.getCurrentPosition()*0.001)+5)>(int)(((buffer/(double)100)*mediaDuration)*0.001))));
                 seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mediaPlayer!=null)
+                        timeLeft.setText(((mediaDuration-mediaPlayer.getCurrentPosition())/60000 )+":"+((mediaDuration-mediaPlayer.getCurrentPosition())%60000)/1000);
+                    }
+        });
                 if ((int)(mediaPlayer.getCurrentPosition()*0.001) == (int)(mediaDuration*0.001)) {
 
 if (c>4){
@@ -475,6 +486,243 @@ synchronized (this) {
             mediaPlayer.pause();
             button.setText("Start");
         }
+    }
+    public void listened(){
+
+
+
+            db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if (error==null){
+                        if (value!=null){
+                            if (!value.isEmpty()) {
+                                for (QueryDocumentSnapshot documentSnapshot:value) {
+                                    Map<String,Object> ud=new HashMap<>();
+                                    ud.put("i",true);
+                                    db.collection("podcast").document(documentSnapshot.getId()).collection("ListenedBy").document(user.getUid()).set(ud).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            getListenedBy();
+                                        }
+                                    });
+}                            }
+                        }
+                    }
+                }
+            });
+
+
+
+    }
+
+    public void setLikeButton(View view) {
+        final Map<String,Object> ud=new HashMap<>();
+        final boolean[] check = {false};
+
+
+        final ArrayList<QueryDocumentSnapshot> d=new ArrayList<>();
+
+if (likeCheck){
+
+
+    db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+            if (error==null){
+                if (value!=null){
+                    if (!value.isEmpty()) {
+                        for (QueryDocumentSnapshot documentSnapshot:value) {
+
+
+                            d.add(documentSnapshot);
+
+                            break;
+                        }
+                        if (!check[0]){
+
+
+
+                            ud.put("i",true);
+                        db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").document(user.getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                    likeCheck=false;
+                                    check[0] =true;
+
+                                    likeButton.setBackgroundColor(Color.WHITE);
+                                    d.clear();
+
+                                    getLikedBy();
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });}
+                    }
+                }
+            }
+        }
+    });
+}else{
+
+
+    db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+            if (error==null){
+                if (value!=null){
+                    if (!value.isEmpty()) {
+                        for (QueryDocumentSnapshot documentSnapshot:value) {
+
+
+                            d.add(documentSnapshot);
+
+                            break;
+                        }
+                        if (!check[0]){
+
+
+                            ud.put("i",true);
+                        db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").document(user.getUid()).set(ud).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                    likeCheck=true;
+                                    check[0] =true;
+
+                                    likeButton.setBackgroundColor(Color.RED);
+                                    d.clear();
+
+                                    getLikedBy();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });}
+                    }
+                }
+            }
+        }
+    });
+}
+
+    }
+    public void getLikedBy(){
+        final boolean[] check = {false};
+
+
+        final ArrayList<QueryDocumentSnapshot> d=new ArrayList<>();
+
+
+
+
+            db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                    if (error==null){
+                        if (value!=null){
+                            if (!value.isEmpty()) {
+                                for (QueryDocumentSnapshot documentSnapshot:value) {
+
+
+                                    d.add(documentSnapshot);
+
+                                    break;
+                                }
+                                if (!check[0]){
+
+
+
+                                    Source source =Source.SERVER;
+                                    db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").get(source).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            check[0]=true;
+                                            for (QueryDocumentSnapshot document:queryDocumentSnapshots){
+                                                if (document.getId().equals(user.getUid())){
+                                                    likeCheck=true;
+
+
+                                                    likeButton.setBackgroundColor(Color.RED);
+
+                                                }
+
+
+                                            }
+                                            LikedByCount=queryDocumentSnapshots.size();
+                                            likedBy.setText(getString(R.string.likedby)+LikedByCount);
+
+
+                                            d.clear();
+                                        }
+                                    });
+
+
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+    }
+    public void getListenedBy(){
+        final boolean[] check = {false};
+
+
+        final ArrayList<QueryDocumentSnapshot> d=new ArrayList<>();
+
+
+
+
+        db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                if (error==null){
+                    if (value!=null){
+                        if (!value.isEmpty()) {
+                            for (QueryDocumentSnapshot documentSnapshot:value) {
+
+
+                                d.add(documentSnapshot);
+
+                                break;
+                            }
+                            if (!check[0]){
+
+                                Source source=Source.SERVER;
+
+                                db.collection("podcast").document(d.get(0).getId()).collection("ListenedBy").get(source).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        check[0]=true;
+
+
+                                        listenedByCount=queryDocumentSnapshots.size();
+                                        listenedby.setText(getString(R.string.listenedby)+listenedByCount);
+
+                                        d.clear();
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
     }
 
 }

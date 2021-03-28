@@ -8,7 +8,7 @@
 
 <View
     android:layout_width="match_parent"
-    android:layout_height="310dp"/>
+    android:layout_height="350dp"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"

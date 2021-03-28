@@ -12,20 +12,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".myAccount"></activity>
+        <activity android:name=".SignIn_Activity"></activity>
+        <activity android:name=".myAccount" />
         <activity android:name=".contact_activity" />
-        <activity android:name=".podcastPlayer" />
-        <activity android:name=".interviewsActivity" />
-        <activity android:name=".home_Activity" />
         <activity android:name=".podcastPlayer" />
         <activity android:name=".podcast_Activity" />
         <activity android:name=".MainActivity">
+            <meta-data
+                android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
+                android:value="true"/>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-6131297776983901~1714411856"/>
     </application>
 
 </manifest>

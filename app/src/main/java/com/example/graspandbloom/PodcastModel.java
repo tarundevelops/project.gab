@@ -1,7 +1,5 @@
 package com.example.graspandbloom;
 
-
-
 public class PodcastModel  {
     private String Topic;
     private String SpeakerName;
@@ -10,7 +8,18 @@ public class PodcastModel  {
     private String duration;
     private String imageUrl;
     private String audioUrl;
+    private String orderBy;
 
+
+
+
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
+
+    public String getOrderBy() {
+        return orderBy;
+    }
 
 
     public PodcastModel() {
