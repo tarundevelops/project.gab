@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -64,9 +65,9 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
     private boolean previousState=false;
     private boolean ready=false;
 
-    private AlertDialog.Builder builder;
-    private AlertDialog dialog;
-
+   // private AlertDialog.Builder builder;
+   // private AlertDialog dialog;
+   ProgressDialog dialog;
     private boolean likeCheck=false;
 
     private static int listenedByCount;
@@ -94,10 +95,11 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
         likedBy=findViewById(R.id.podcastLikedBy);
 
         final Bundle bundle = getIntent().getExtras();
-        builder=new AlertDialog.Builder(this);
-        View view =getLayoutInflater().inflate(R.layout.media_player_loading,null);
+       /* builder=new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.media_player_loading,null);
         builder.setView(view);
-        dialog=builder.create();
+        dialog=builder.create();*/
+        dialog = ProgressDialog.show(this, "", "Loading ....");
         dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
