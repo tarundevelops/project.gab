@@ -5,13 +5,22 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -48,6 +57,7 @@ public class SignIn_Activity extends AppCompatActivity {
     AlertDialog.Builder builder;
     AlertDialog dialog;
     private ProgressBar pb;
+    private TextView textView2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +66,41 @@ public class SignIn_Activity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         pb=findViewById(R.id.pbId);
+        textView2 = findViewById(R.id.textView2);
+
+       String message = "By signing in, you are accepting our Terms and Conditions and Privacy Policy.";
+        SpannableString spannable1 = new SpannableString(message);
+        spannable1.setSpan(new ForegroundColorSpan(
+                        ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary)),
+                37, 57, 0);
+        ClickableSpan clickableSpan1 = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                Intent openURL = new Intent(android.content.Intent.ACTION_VIEW);
+                openURL.setData(Uri.parse("https://decib.in/terms-and-conditions/"));
+                startActivity(openURL);
+            }
+        };
+        spannable1.setSpan(clickableSpan1,37,57,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+        SpannableString spannable2 = new SpannableString(spannable1);
+        spannable2.setSpan(new ForegroundColorSpan(
+                        ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary)),
+                61, 76, 0);
+        ClickableSpan clickableSpan2 = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://decib.in/privacy-policy/"));
+                startActivity(intent);
+            }
+        };
+        spannable2.setSpan(clickableSpan2,61,76, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+       textView2.setText(spannable2);
+       textView2.setMovementMethod(LinkMovementMethod.getInstance());
 
         builder=new AlertDialog.Builder(this);
         View view =getLayoutInflater().inflate(R.layout.privacy_policy_terms_conditions,null);
