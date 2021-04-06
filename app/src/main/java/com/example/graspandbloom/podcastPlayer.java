@@ -65,8 +65,6 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
     private boolean previousState=false;
     private boolean ready=false;
 
-   // private AlertDialog.Builder builder;
-   // private AlertDialog dialog;
    ProgressDialog dialog;
     private boolean likeCheck=false;
 

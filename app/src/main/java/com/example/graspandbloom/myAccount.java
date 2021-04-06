@@ -16,11 +16,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.auth.GoogleAuthCredential;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,10 +39,9 @@ import com.squareup.picasso.Picasso;
 import java.util.Objects;
 
 public class myAccount extends AppCompatActivity {
-FirebaseUser currentuser;
+public static FirebaseUser currentuser=FirebaseAuth.getInstance().getCurrentUser();
 TextView userName,emailAddres;
 
-FirebaseFirestore db;
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawerLayout;
 
@@ -85,17 +94,17 @@ ImageView userImage;
                 Toast.makeText(myAccount.this, "ok", Toast.LENGTH_SHORT).show();
                 FirebaseAuth auth=FirebaseAuth.getInstance();
                 auth.signOut();
-                Intent i = new Intent(myAccount.this,MainActivity.class);
+                Intent i = new Intent(myAccount.this,SignIn_Activity.class);
                 startActivity(i);
                 myAccount.this.finish();
 
             }
         });
-        currentuser= FirebaseAuth.getInstance().getCurrentUser();
+
         userName=findViewById(R.id.username);
         emailAddres=findViewById(R.id.emailaddress);
         userImage=findViewById(R.id.useriamge);
-        db=FirebaseFirestore.getInstance();
+
 
         Picasso.get().load(currentuser.getPhotoUrl()).into(userImage);
 
@@ -107,51 +116,6 @@ ImageView userImage;
 
     }
 
-    public void deleteAccount(View view) {
-        db.collection("UserDetails").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
-                for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots) {
-                    if (documentSnapshot.get("personEmail").equals(currentuser.getEmail())){
-                        db.collection("UserDetails").document(documentSnapshot.getReference().getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                currentuser.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        FirebaseAuth auth=FirebaseAuth.getInstance();
-                                        auth.signOut();
-                                        Intent i = new Intent(myAccount.this,MainActivity.class);
-                                        startActivity(i);
-                                        Toast.makeText(myAccount.this, "Account deleted successfully", Toast.LENGTH_SHORT).show();
-                                        myAccount.this.finish();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(myAccount.this, "Failed to delete account. \n Please restart the app and try again to delete account.", Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                                Toast.makeText(myAccount.this, "Failed to delete account. \n Please try again.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(myAccount.this, "Failed to delete account. \n Please try again.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (toggle.onOptionsItemSelected(item)) {
