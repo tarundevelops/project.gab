@@ -67,7 +67,7 @@ public class contact_activity extends AppCompatActivity {
                 Toast.makeText(contact_activity.this, "ok", Toast.LENGTH_SHORT).show();
                 FirebaseAuth auth=FirebaseAuth.getInstance();
                 auth.signOut();
-                Intent i = new Intent(contact_activity.this,MainActivity.class);
+                Intent i = new Intent(contact_activity.this,SignIn_Activity.class);
                 startActivity(i);
                 contact_activity.this.finish();
             }

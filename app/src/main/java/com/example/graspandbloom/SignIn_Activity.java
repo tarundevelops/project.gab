@@ -54,8 +54,7 @@ public class SignIn_Activity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private int RC_SIGN_IN = 1;
-    AlertDialog.Builder builder;
-    AlertDialog dialog;
+
     private ProgressBar pb;
     private TextView textView2;
     @Override
@@ -102,12 +101,6 @@ public class SignIn_Activity extends AppCompatActivity {
        textView2.setText(spannable2);
        textView2.setMovementMethod(LinkMovementMethod.getInstance());
 
-        builder=new AlertDialog.Builder(this);
-        View view =getLayoutInflater().inflate(R.layout.privacy_policy_terms_conditions,null);
-
-        builder.setView(view);
-        dialog=builder.create();
-        dialog.setCanceledOnTouchOutside(false);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -120,17 +113,14 @@ public class SignIn_Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                dialog.show();
 
+                signIn();
 
 
             }
         });
     }
-    public void accepted(View view){
-        dialog.dismiss();
-        signIn();
-    }
+
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -151,6 +141,7 @@ public class SignIn_Activity extends AppCompatActivity {
 
     private void handleSignInResult(Task<GoogleSignInAccount> task) {
         try{
+
             final GoogleSignInAccount acc = task.getResult(ApiException.class);
             Toast.makeText(getApplicationContext(),"Signing Success",Toast.LENGTH_SHORT).show();
             FirebaseGoogleAuth(acc);
@@ -258,8 +249,4 @@ public class SignIn_Activity extends AppCompatActivity {
         }
     }
 
-    public void declined(View view) {
-
-        dialog.dismiss();
-    }
 }

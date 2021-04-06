@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,16 +65,14 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
 
     private ImageView podcastImage;
 
+   private AdView adView;
+   private Parcelable listState;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_podcast);
-
-        ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(this)
-                .setDebugGeography(ConsentDebugSettings
-                        .DebugGeography
-                        .DEBUG_GEOGRAPHY_EEA).setForceTesting(true).build();
-        ConsentRequestParameters param = new ConsentRequestParameters.Builder().setConsentDebugSettings(debugSettings).setTagForUnderAgeOfConsent(false).build();
+        ConsentRequestParameters param = new ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(false).build();
         ci = UserMessagingPlatform.getConsentInformation(this);
         ci.requestConsentInfoUpdate(this, param, new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
             @Override
@@ -83,12 +83,13 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
 if(ci.isConsentFormAvailable()){
                 loadConsent();}else if(ci.getConsentStatus() == ConsentInformation.ConsentStatus.NOT_REQUIRED) {
     MobileAds.initialize(podcast_Activity.this);
-    AdView adView = findViewById(R.id.adView);
+     adView = findViewById(R.id.adView);
 
 
     AdRequest adRequest =new AdRequest.Builder().build();
     adRequest.isTestDevice(podcast_Activity.this);
     adView.loadAd(adRequest);
+
 }
 
             }
@@ -114,6 +115,7 @@ if(ci.isConsentFormAvailable()){
         navigationView = findViewById(R.id.nv_2);
         recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         podcastImage = findViewById(R.id.imageView);
@@ -146,7 +148,7 @@ if(ci.isConsentFormAvailable()){
                 Toast.makeText(podcast_Activity.this, "ok", Toast.LENGTH_SHORT).show();
                 FirebaseAuth auth=FirebaseAuth.getInstance();
                 auth.signOut();
-                Intent i = new Intent(podcast_Activity.this,MainActivity.class);
+                Intent i = new Intent(podcast_Activity.this,SignIn_Activity.class);
                 startActivity(i);
                 podcast_Activity.this.finish();
             }
@@ -207,13 +209,12 @@ if(ci.isConsentFormAvailable()){
         }, new UserMessagingPlatform.OnConsentFormLoadFailureListener() {
             @Override
             public void onConsentFormLoadFailure(FormError formError) {
-//loadConsent();
+
             }
         });
 
 
     }
-
 
 
     @Override
@@ -231,6 +232,9 @@ if(ci.isConsentFormAvailable()){
                     }
 
                     setAdapter(podcastList);
+                    if(listState!=null){
+                        recyclerView.getLayoutManager().onRestoreInstanceState(listState);
+                    }
 
                 }
             }
@@ -240,6 +244,9 @@ if(ci.isConsentFormAvailable()){
                 Toast.makeText(podcast_Activity.this, "Error occured", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
     }
 
     private void setAdapter(List<PodcastModel> pL) {
@@ -265,8 +272,17 @@ if(ci.isConsentFormAvailable()){
     public void itemClick(int position) {
        Intent intent = new Intent(podcast_Activity.this, podcastPlayer.class);
        intent.putExtra("index",position);
-
+        listState= recyclerView.getLayoutManager().onSaveInstanceState();
        startActivity(intent);
+
+    }
+
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 
     @Override
@@ -276,5 +292,11 @@ if(ci.isConsentFormAvailable()){
         if(ci!=null){
             ci.reset();
         }
+
+        if(adView!=null){
+            adView.destroy();
+        }
+
+
     }
 }
