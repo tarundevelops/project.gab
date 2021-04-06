@@ -72,12 +72,15 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_podcast);
-        ConsentRequestParameters param = new ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(false).build();
+
+        ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(this).setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA).setForceTesting(true).build();
+
+        ConsentRequestParameters param = new ConsentRequestParameters.Builder().setConsentDebugSettings(debugSettings).setTagForUnderAgeOfConsent(false).build();
         ci = UserMessagingPlatform.getConsentInformation(this);
         ci.requestConsentInfoUpdate(this, param, new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
             @Override
             public void onConsentInfoUpdateSuccess() {
-             //   ci.reset();
+
 
                 Log.d("ConsentStatus0", (ci.isConsentFormAvailable())+""+ci.getConsentStatus());
 if(ci.isConsentFormAvailable()){
