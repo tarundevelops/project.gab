@@ -9,7 +9,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
@@ -18,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
@@ -40,6 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -54,8 +59,9 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
     private DrawerLayout drawerLayout;
 
     private NavigationView navigationView;
-    private Button signout;
+    private Button signout,tryAgain;
     private ConsentInformation ci;
+
 
     private ConsentForm c;
 
@@ -67,41 +73,83 @@ public class podcast_Activity extends AppCompatActivity implements recyclerv.onI
 
    private AdView adView;
    private Parcelable listState;
+   private Boolean iCheck =true;
+    private boolean firstCheck =false;
+    private ConnectivityManager cm;
+    private ConnectivityManager.NetworkCallback networkCallback;
+private Source source = Source.SERVER;
+private TextView itext;
+    private boolean hasRestarted=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_podcast);
 
-        ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(this).setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA).setForceTesting(true).build();
+        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
 
-        ConsentRequestParameters param = new ConsentRequestParameters.Builder().setConsentDebugSettings(debugSettings).setTagForUnderAgeOfConsent(false).build();
-        ci = UserMessagingPlatform.getConsentInformation(this);
-        ci.requestConsentInfoUpdate(this, param, new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
+         cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+         networkCallback =new ConnectivityManager.NetworkCallback(){
             @Override
-            public void onConsentInfoUpdateSuccess() {
-
-
-                Log.d("ConsentStatus0", (ci.isConsentFormAvailable())+""+ci.getConsentStatus());
-if(ci.isConsentFormAvailable()){
-                loadConsent();}else if(ci.getConsentStatus() == ConsentInformation.ConsentStatus.NOT_REQUIRED) {
-    MobileAds.initialize(podcast_Activity.this);
-     adView = findViewById(R.id.adView);
-
-
-    AdRequest adRequest =new AdRequest.Builder().build();
-    adRequest.isTestDevice(podcast_Activity.this);
-    adView.loadAd(adRequest);
-
-}
+            public void onAvailable(@NonNull Network network) {
+                super.onAvailable(network);
+                firstCheck=true;
+//                if(!iCheck){
+ //              Toast.makeText(podcast_Activity.this, "Internet Available", Toast.LENGTH_SHORT).show();
+//                iCheck=true;
+//                }
 
             }
-        }, new ConsentInformation.OnConsentInfoUpdateFailureListener() {
-            @Override
-            public void onConsentInfoUpdateFailure(FormError formError) {
 
-            }
-        });
+             @Override
+             public void onLost(@NonNull Network network) {
+                 super.onLost(network);
+                 firstCheck=false;
+
+                 runOnUiThread(new Runnable() {
+                     @Override
+                     public void run() {
+                         if(tryAgain.getVisibility() != View.VISIBLE){
+                         recyclerView.setVisibility(View.GONE);
+                         itext.setVisibility(View.VISIBLE);
+                         tryAgain.setVisibility(View.VISIBLE);}
+                     }
+                 });
+             }
+         };
+         cm.registerDefaultNetworkCallback(networkCallback);
+
+
+
+//        ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(this).setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA).setForceTesting(true).build();
+//
+//        ConsentRequestParameters param = new ConsentRequestParameters.Builder().setConsentDebugSettings(debugSettings).setTagForUnderAgeOfConsent(false).build();
+//        ci = UserMessagingPlatform.getConsentInformation(this);
+//        ci.requestConsentInfoUpdate(this, param, new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
+//            @Override
+//            public void onConsentInfoUpdateSuccess() {
+//
+//
+//                Log.d("ConsentStatus0", (ci.isConsentFormAvailable())+""+ci.getConsentStatus());
+//if(ci.isConsentFormAvailable()){
+//                loadConsent();}else if(ci.getConsentStatus() == ConsentInformation.ConsentStatus.NOT_REQUIRED) {
+////    MobileAds.initialize(podcast_Activity.this);
+////    adView = findViewById(R.id.adView);
+////
+////
+////    AdRequest adRequest =new AdRequest.Builder().build();
+////    adRequest.isTestDevice(podcast_Activity.this);
+////    adView.loadAd(adRequest);
+//
+//}
+//
+//            }
+//        }, new ConsentInformation.OnConsentInfoUpdateFailureListener() {
+//            @Override
+//            public void onConsentInfoUpdateFailure(FormError formError) {
+//
+//            }
+//        });
 
 
 
@@ -122,6 +170,10 @@ if(ci.isConsentFormAvailable()){
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         podcastImage = findViewById(R.id.imageView);
+        itext = findViewById(R.id.iu);
+        tryAgain =findViewById(R.id.tryAgainButton);
+
+
 
         //View v = navigationView.inflateHeaderView(R.layout.drawerheader);
 
@@ -158,16 +210,7 @@ if(ci.isConsentFormAvailable()){
         });
 
 
-        db.collection("podcastImage").document("Image").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                String url="";
-                if ((url= (String) documentSnapshot.get("imageUrl"))!=null){
-                    if (!url.isEmpty())
-                        Picasso.get().load(url).fit().into(podcastImage);
-                }
-            }
-        });
+
     }
     public void loadConsent() {
 
@@ -176,7 +219,7 @@ if(ci.isConsentFormAvailable()){
             @Override
             public void onConsentFormLoadSuccess(ConsentForm consentForm) {
                 podcast_Activity.this.c = consentForm;
-                Log.d("ConsentStatus", (c)+"");
+                Log.d("ConsentStatus", (ci.getConsentStatus())+"");
                 Log.d("ConsentStatus1", (ci.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED)+"");
 
                 if (ci.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
@@ -185,33 +228,37 @@ if(ci.isConsentFormAvailable()){
                         @Override
                         public void onConsentFormDismissed(@Nullable FormError formError) {
 
-                                MobileAds.initialize(podcast_Activity.this);
-                                AdView adView = findViewById(R.id.adView);
+                 //               MobileAds.initialize(podcast_Activity.this);
+//                            adView = findViewById(R.id.adView);
+//
+//
+//                            AdRequest adRequest =new AdRequest.Builder().build();
+//                            adRequest.isTestDevice(podcast_Activity.this);
+//                            adView.loadAd(adRequest);
 
 
-                                AdRequest adRequest =new AdRequest.Builder().build();
-                                adRequest.isTestDevice(podcast_Activity.this);
-                                adView.loadAd(adRequest);
 
-                               // ci.reset();
 
-                            //loadConsent();
 
                         }
                     });
                 }else if(ci.getConsentStatus() == ConsentInformation.ConsentStatus.NOT_REQUIRED){
-                    MobileAds.initialize(podcast_Activity.this);
-                    AdView adView = findViewById(R.id.adView);
+             //       MobileAds.initialize(podcast_Activity.this);
+//                    adView = findViewById(R.id.adView);
+//
+//
+//                    AdRequest adRequest =new AdRequest.Builder().build();
+//                    adRequest.isTestDevice(podcast_Activity.this);
+//                    adView.loadAd(adRequest);
 
-
-                    AdRequest adRequest =new AdRequest.Builder().build();
-                    adRequest.isTestDevice(podcast_Activity.this);
-                    adView.loadAd(adRequest);
                 }
+
+
             }
         }, new UserMessagingPlatform.OnConsentFormLoadFailureListener() {
             @Override
             public void onConsentFormLoadFailure(FormError formError) {
+
 
             }
         });
@@ -223,32 +270,10 @@ if(ci.isConsentFormAvailable()){
     @Override
     protected void onStart() {
         super.onStart();
-        podcastList.clear();
-        podcastDB.orderBy("orderBy", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (queryDocumentSnapshots != null && queryDocumentSnapshots.size() > 0){
-                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots){
-                        PodcastModel m = queryDocumentSnapshot.toObject(PodcastModel.class);
-
-                        podcastList.add(m);
-                    }
-
-                    setAdapter(podcastList);
-                    if(listState!=null){
-                        recyclerView.getLayoutManager().onRestoreInstanceState(listState);
-                    }
-
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(podcast_Activity.this, "Error occured", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
+        Toast.makeText(this, ""+this.hasRestarted, Toast.LENGTH_SHORT).show();
+//if(!this.hasRestarted){
+   listPosterLoad();
+//    }
 
     }
 
@@ -273,10 +298,14 @@ if(ci.isConsentFormAvailable()){
 
     @Override
     public void itemClick(int position) {
+        if(firstCheck){
        Intent intent = new Intent(podcast_Activity.this, podcastPlayer.class);
        intent.putExtra("index",position);
-        listState= recyclerView.getLayoutManager().onSaveInstanceState();
+        listState= Objects.requireNonNull(recyclerView.getLayoutManager()).onSaveInstanceState();
        startActivity(intent);
+       hasRestarted=true;
+        }
+
 
     }
 
@@ -285,21 +314,100 @@ if(ci.isConsentFormAvailable()){
     @Override
     protected void onPause() {
         super.onPause();
+        if(cm!=null && networkCallback!=null && !hasRestarted ){
+cm.unregisterNetworkCallback(networkCallback);
+      }
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        Toast.makeText(this, "onDestroy called", Toast.LENGTH_SHORT).show();
         if(ci!=null){
+            Toast.makeText(this, ""+ci.getConsentType(), Toast.LENGTH_SHORT).show();
             ci.reset();
+            ci=null;
         }
 
         if(adView!=null){
             adView.destroy();
         }
+        if(cm!=null && networkCallback!=null){
+            cm.unregisterNetworkCallback(networkCallback);
+        }
 
 
+    }
+
+    public void podcastLoad(View view) {
+        if(firstCheck) {
+            Intent load = new Intent(podcast_Activity.this, podcast_Activity.class);
+            startActivity(load);
+
+            podcast_Activity.this.finish();
+        }
+    }
+
+    public void listPosterLoad(){
+        if(firstCheck) {
+            Toast.makeText(this, "Called ok", Toast.LENGTH_SHORT).show();
+            recyclerView.setVisibility(View.VISIBLE);
+            db.collection("podcastImage").document("Image").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    String url = "";
+                    if ((url = (String) documentSnapshot.get("imageUrl")) != null) {
+                        if (!url.isEmpty())
+                            Picasso.get().load(url).fit().into(podcastImage);
+                    }
+                }
+            });
+
+            podcastList.clear();
+            podcastDB.orderBy("orderBy", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    if (queryDocumentSnapshots != null && queryDocumentSnapshots.size() > 0) {
+                        for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                            PodcastModel m = queryDocumentSnapshot.toObject(PodcastModel.class);
+
+                            podcastList.add(m);
+                        }
+
+                        setAdapter(podcastList);
+                        if (listState != null) {
+                            Objects.requireNonNull(recyclerView.getLayoutManager()).onRestoreInstanceState(listState);
+                        }
+
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                   // Toast.makeText(podcast_Activity.this, "Error occured "+e.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        }else {
+           if(tryAgain.getVisibility() != View.VISIBLE){
+            recyclerView.setVisibility(View.GONE);
+            itext.setVisibility(View.VISIBLE);
+            tryAgain.setVisibility(View.VISIBLE);}
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+hasRestarted=false;
+//this.hasRestarted = true;
+//if(!firstCheck){
+//    db.disableNetwork();
+//    Intent load = new Intent(podcast_Activity.this, myAccount.class);
+//    startActivity(load);
+//
+//    podcast_Activity.this.finish();
+//}
     }
 }

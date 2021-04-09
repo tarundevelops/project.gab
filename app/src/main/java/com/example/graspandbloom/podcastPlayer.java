@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -75,6 +76,8 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
 
     private static int listenedByCount;
     private static int LikedByCount;
+    private ConnectivityManager cm;
+    private ConnectivityManager.NetworkCallback networkCallback;
 
 
     @Override
@@ -96,7 +99,7 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
         timeLeft=findViewById(R.id.timeleft);
         likeButton=findViewById(R.id.like);
         likedBy=findViewById(R.id.podcastLikedBy);
-        displayAd();
+        //displayAd();
 
         final Bundle bundle = getIntent().getExtras();
        /* builder=new AlertDialog.Builder(this);
@@ -161,9 +164,9 @@ mediaPlayer.pause();
         }    }
         });
 
-        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N) {
-            cm.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback(){
+         cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            networkCallback =new ConnectivityManager.NetworkCallback(){
                 @Override
                 public void onAvailable(@NonNull Network network) {
                     super.onAvailable(network);
@@ -199,16 +202,16 @@ runOnUiThread(new Runnable() {
                  }
 
 
-            });
+            };
 
-        }
+cm.registerDefaultNetworkCallback(networkCallback);
 
 
         if (bundle != null) {
      index=bundle.getInt("index");
 
             list = podcast_Activity.getPodcastList();
-
+if(index<=(list.size()-1)){
 
             duration.setText(getString(R.string.duration) + list.get(index).getDuration());
             publishDate.setText(getString(R.string.published) + list.get(index).getDate());
@@ -219,9 +222,20 @@ runOnUiThread(new Runnable() {
 
 
 
-setMediaPlayer();
+setMediaPlayer();}else{
+    dialog.dismiss();
+    Toast.makeText(this, "Problem occurred", Toast.LENGTH_SHORT).show();
+
+ this.finish();
 
 
+}
+
+
+        }else {
+            dialog.dismiss();
+            Toast.makeText(this, "Problem occurred", Toast.LENGTH_SHORT).show();
+            this.finish();
         }
     }
 
@@ -356,14 +370,7 @@ message.setVisibility(View.GONE);}
             }
 
         };
-        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                Toast.makeText(podcastPlayer.this, "Error occurred", Toast.LENGTH_SHORT).show();
-                return false;
-            }
 
-        });
         mediaPlayer.setOnPreparedListener(preparedListener);
         mediaPlayer.prepareAsync();
 
@@ -390,6 +397,7 @@ message.setVisibility(View.GONE);}
 
 
     }
+
 
     public synchronized boolean getFlag(){
         notifyAll();
@@ -426,8 +434,11 @@ notifyAll();
                 mediaPlayer =null;
             }}
 
-        if(adView!=null){
-            adView.destroy();
+//        if(adView!=null){
+//            adView.destroy();
+//        }
+        if(cm!=null && networkCallback!=null){
+            cm.unregisterNetworkCallback(networkCallback);
         }
     }
 
@@ -735,16 +746,17 @@ if (likeCheck){
 
     }
 
-    public void displayAd(){
+//    public void displayAd(){
+//
+//             adView = findViewById(R.id.adView2);
+//
+//
+//            AdRequest adRequest = new AdRequest.Builder().build();
+//            adRequest.isTestDevice(podcastPlayer.this);
+//
+//            adView.loadAd(adRequest);
+//        }
 
-             adView = findViewById(R.id.adView2);
-
-
-            AdRequest adRequest = new AdRequest.Builder().build();
-            adRequest.isTestDevice(podcastPlayer.this);
-
-            adView.loadAd(adRequest);
-        }
 
 
 }

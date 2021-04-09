@@ -80,4 +80,5 @@ public class contact_activity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

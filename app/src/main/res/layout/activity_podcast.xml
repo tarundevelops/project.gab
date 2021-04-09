@@ -46,6 +46,28 @@
             ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
         </com.google.android.gms.ads.AdView>
 
+        <TextView
+            android:id="@+id/iu"
+            android:layout_marginTop="100dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginEnd="100dp"
+            android:padding="10dp"
+            android:layout_below="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Internet not available"
+            android:textSize="16sp"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/tryAgainButton"
+            android:layout_marginStart="135dp"
+            android:layout_below="@+id/iu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Try again"
+            android:onClick="podcastLoad"
+            android:visibility="gone"/>
+
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -54,7 +76,9 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/listview" />
+    <include
+        android:id="@+id/rv"
+        layout="@layout/listview"/>
     <com.google.android.material.navigation.NavigationView
     android:id="@+id/nv_2"
     android:layout_width="wrap_content"
