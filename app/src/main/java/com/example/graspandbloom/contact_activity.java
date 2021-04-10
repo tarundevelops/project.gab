@@ -4,10 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +45,7 @@ public class contact_activity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
                 switch (item.getItemId()){
                     case R.id.myAccount_id: startActivity(new Intent(contact_activity.this, myAccount.class));
                     contact_activity.this.finish();
@@ -51,6 +55,18 @@ public class contact_activity extends AppCompatActivity {
                         break;
                     case R.id.podcasts: startActivity(new Intent(contact_activity.this, podcast_Activity.class));
                     contact_activity.this.finish();
+                        break;
+                    case R.id.tnc:
+                        Intent openURL = new Intent(android.content.Intent.ACTION_VIEW);
+                        openURL.setData(Uri.parse("https://decib.in/terms-and-conditions/"));
+                        startActivity(openURL);
+                        break;
+                    case R.id.privacyPolicy:
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                        intent.setData(Uri.parse("https://decib.in/privacy-policy/"));
+                        startActivity(intent);
                         break;
                 }
                 return false;

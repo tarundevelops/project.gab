@@ -58,6 +58,7 @@ public class SignIn_Activity extends AppCompatActivity {
 
     private ProgressBar pb;
     private TextView textView2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +67,15 @@ public class SignIn_Activity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         pb=findViewById(R.id.pbId);
-        textView2 = findViewById(R.id.textView2);
+         textView2 = findViewById(R.id.textView2);
 
        String message = "By signing in, you are accepting our Terms and Conditions and Privacy Policy.";
         SpannableString spannable1 = new SpannableString(message);
-        spannable1.setSpan(new ForegroundColorSpan(
-                        ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary)),
-                37, 57, 0);
+
+       spannable1.setSpan(new BackgroundColorSpan(ContextCompat.getColor(
+                getApplicationContext(),R.color.colorWhite)),
+                37,57,0);
+
         ClickableSpan clickableSpan1 = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View textView) {
@@ -85,8 +88,7 @@ public class SignIn_Activity extends AppCompatActivity {
 
 
         SpannableString spannable2 = new SpannableString(spannable1);
-        spannable2.setSpan(new ForegroundColorSpan(
-                        ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary)),
+       spannable2.setSpan(new BackgroundColorSpan(ContextCompat.getColor(getApplicationContext(), R.color.colorWhite)),
                 61, 76, 0);
         ClickableSpan clickableSpan2 = new ClickableSpan() {
             @Override
@@ -100,7 +102,7 @@ public class SignIn_Activity extends AppCompatActivity {
         };
         spannable2.setSpan(clickableSpan2,61,76, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
        textView2.setText(spannable2);
-       textView2.setMovementMethod(LinkMovementMethod.getInstance());
+      textView2.setMovementMethod(LinkMovementMethod.getInstance());
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

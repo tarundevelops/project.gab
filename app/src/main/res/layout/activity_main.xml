@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".MainActivity"
     android:orientation="vertical">
 
@@ -13,8 +14,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:fontFamily="cursive"
+        android:gravity="center"
         android:text="@string/title"
-        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textColor="#b58a8a"
+        android:textSize="60sp"
         android:layout_marginTop="100dp"
       />
 
