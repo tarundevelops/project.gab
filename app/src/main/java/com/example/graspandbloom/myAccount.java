@@ -8,6 +8,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,6 +64,7 @@ ImageView userImage;
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+
         navigationView = findViewById(R.id.nv_myAccnt);
 
         //View v = navigationView.inflateHeaderView(R.layout.drawerheader);
@@ -81,6 +83,18 @@ ImageView userImage;
 
                     case R.id.podcasts: startActivity(new Intent(myAccount.this, podcast_Activity.class));
                     myAccount.this.finish();
+                        break;
+                    case R.id.tnc:
+                        Intent openURL = new Intent(android.content.Intent.ACTION_VIEW);
+                        openURL.setData(Uri.parse("https://decib.in/terms-and-conditions/"));
+                        startActivity(openURL);
+                        break;
+                    case R.id.privacyPolicy:
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                        intent.setData(Uri.parse("https://decib.in/privacy-policy/"));
+                        startActivity(intent);
                         break;
                 }
                 return false;

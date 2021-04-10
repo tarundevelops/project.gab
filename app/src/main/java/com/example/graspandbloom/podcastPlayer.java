@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -567,13 +568,14 @@ if (likeCheck){
 
                             ud.put("i",true);
                         db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").document(user.getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @SuppressLint("ResourceAsColor")
                             @Override
                             public void onSuccess(Void aVoid) {
 
                                     likeCheck=false;
                                     check[0] =true;
 
-                                    likeButton.setBackgroundColor(Color.WHITE);
+                                    likeButton.setBackgroundColor(R.color.likeColor);
                                     d.clear();
 
                                     getLikedBy();
@@ -612,13 +614,14 @@ if (likeCheck){
 
                             ud.put("i",true);
                         db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").document(user.getUid()).set(ud).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @SuppressLint("ResourceAsColor")
                             @Override
                             public void onSuccess(Void aVoid) {
 
                                     likeCheck=true;
                                     check[0] =true;
 
-                                    likeButton.setBackgroundColor(Color.RED);
+                                    likeButton.setBackgroundColor(R.color.likeColor);
                                     d.clear();
 
                                     getLikedBy();
@@ -666,6 +669,7 @@ if (likeCheck){
 
                                     Source source =Source.SERVER;
                                     db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").get(source).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @SuppressLint("ResourceAsColor")
                                         @Override
                                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                             check[0]=true;
@@ -674,7 +678,7 @@ if (likeCheck){
                                                     likeCheck=true;
 
 
-                                                    likeButton.setBackgroundColor(Color.RED);
+                                                    likeButton.setBackgroundColor(R.color.likeColor);
 
                                                 }
 

@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".contact_activity"
     android:id="@+id/drawerLayout_CA">
     <RelativeLayout
@@ -15,8 +16,9 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_1"
             android:layout_width="match_parent"
+            app:titleTextColor="@color/black"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/background"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
         <TextView
@@ -24,8 +26,12 @@
             android:layout_below="@+id/toolbar_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Just Bloom"
-            android:textSize="36sp"
+            android:fontFamily="cursive"
+            android:text="@string/title"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="#b58a8a"
+            android:textSize="60sp"
             android:layout_marginTop="25dp"
             android:gravity="center_horizontal"/>
         <TextView
@@ -33,36 +39,47 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="You may contact us with given below email address"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:layout_below="@+id/tvName"
-            android:layout_marginTop="20sp"
+            android:background="@drawable/textview_background"
+            android:layout_marginTop="30sp"
             android:layout_marginLeft="20sp"
+            android:padding="8dp"
+            android:textColor="@color/black"
             android:layout_marginRight="20sp"
             android:gravity="center_horizontal"/>
+
         <TextView
             android:id="@+id/tvMail1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="sr.tarun98@gmail.com"
-            android:textSize="20sp"
-            android:drawableStart="@drawable/ic_baseline_mail_24"
+            android:layout_below="@+id/tvMessage"
             android:layout_marginLeft="25sp"
-           android:drawablePadding="20sp"
+            android:layout_marginTop="40sp"
             android:layout_marginRight="25sp"
-            android:layout_marginTop="30sp"
-            android:layout_below="@+id/tvMessage"/>
+            android:background="@drawable/textview_background"
+            android:drawablePadding="40dp"
+            android:padding="8dp"
+            android:text="contact@decib.in"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:drawableStartCompat="@drawable/ic_baseline_mail_24" />
 
     </RelativeLayout>
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nv_1"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:background="@color/background"
         app:menu="@menu/drawer_menu"
         android:layout_gravity="start"
         android:fitsSystemWindows="true">
         <Button
             android:id="@+id/signout_button"
             android:layout_width="match_parent"
+            android:background="@color/btnColor"
+            android:textSize="18sp"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_margin="10dp"

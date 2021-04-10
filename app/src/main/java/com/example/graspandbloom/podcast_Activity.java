@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
@@ -191,6 +192,18 @@ if(ci.isConsentFormAvailable()){
                         break;
                     case R.id.podcasts: startActivity(new Intent(podcast_Activity.this, podcast_Activity.class));
                     podcast_Activity.this.finish();
+                        break;
+                    case R.id.tnc:
+                        Intent openURL = new Intent(android.content.Intent.ACTION_VIEW);
+                        openURL.setData(Uri.parse("https://decib.in/terms-and-conditions/"));
+                        startActivity(openURL);
+                        break;
+                    case R.id.privacyPolicy:
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                        intent.setData(Uri.parse("https://decib.in/privacy-policy/"));
+                        startActivity(intent);
                         break;
                 }
                 return false;

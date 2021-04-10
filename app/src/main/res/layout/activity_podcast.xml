@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".podcast_Activity"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:id="@+id/drawerLayout_ULE">
 
@@ -17,9 +18,10 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_2"
+            app:titleTextColor="@color/black"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/background"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
         <ImageView
@@ -83,6 +85,7 @@
     android:id="@+id/nv_2"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
+        android:background="@color/background"
     app:menu="@menu/drawer_menu"
      android:layout_gravity="start"
     android:fitsSystemWindows="true">
@@ -90,6 +93,9 @@
             android:id="@+id/signout_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:background="@color/btnColor"
+            android:textSize="18sp"
             android:layout_gravity="bottom"
             android:layout_margin="10dp"
             android:text="Sign out"/>

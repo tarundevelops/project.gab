@@ -4,124 +4,165 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/background"
     android:layout_height="match_parent"
     tools:context=".podcastPlayer">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
 
-    <ImageView
-        android:id="@+id/podcastImage"
-        android:layout_width="match_parent"
-        android:layout_height="404dp"
-        android:padding="10dp" />
-
-
-    <SeekBar
-        android:id="@+id/seekBarID"
-        android:padding="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_gravity="center_horizontal"/>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:enabled="false"
-        android:padding="5dp"
-        android:text="Start"
-        android:layout_gravity="center_horizontal" />
-
-
-
-    <TextView
-        android:text="00:00"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/timeleft"/>
-
-    <Button
-        android:id="@+id/like"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="25dp"
-        android:text="Like"
-        android:onClick="setLikeButton"
-        android:background="@android:color/white"/>
-
-    <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:text="Problem has occurred due to loss of internet connectivity. You may restart the media player."
-    android:textAlignment="center"
-    android:visibility="gone"
-    android:id="@+id/message"
-    />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tryagain"
-        android:text="Restart"
-        android:visibility="gone"
-/>
-    <TextView
-        android:id="@+id/inPlayerDuration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Duration"
-        android:layout_gravity="start"
-        android:layout_margin="10dp"
-        android:padding="10dp"/>
-    <TextView
-        android:id="@+id/inPlayerPublishDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Published"
-        android:layout_gravity="start"
-        android:layout_margin="10dp"
-        android:padding="10dp"/>
-    <TextView
-        android:id="@+id/podcastTopic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Topic"
-        android:layout_margin="10dp"
-        android:layout_gravity="start"/>
-    <TextView
-        android:id="@+id/podcastListnedBy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Listened by"
-        android:layout_margin="10dp"
-        android:layout_gravity="start"/>
-    <TextView
-        android:id="@+id/podcastLikedBy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Liked by"
-        android:layout_margin="10dp"
-        android:layout_gravity="start"/>
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:layout_margin="10dp"
-        android:id="@+id/adView2"
-        android:layout_below="@+id/imageView"
+    <LinearLayout
+        android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
-    </com.google.android.gms.ads.AdView>
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/podcastImage"
+            android:layout_width="match_parent"
+            android:layout_height="404dp"
+            android:padding="10dp" />
 
+
+        <SeekBar
+            android:id="@+id/seekBarID"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_gravity="center_horizontal"
+            android:padding="5dp" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp"
+            android:background="@drawable/round_btn"
+            android:padding="5dp"
+            android:text="Start"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:id="@+id/timeleft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="00:00"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:background="@drawable/round_btn"
+            android:onClick="setLikeButton"
+            android:text="Like"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Problem has occurred due to loss of internet connectivity. You may restart the media player."
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/tryagain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_btn"
+            android:text="Restart"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:visibility="gone"
+            />
+
+
+
+
+            <TextView
+                android:id="@+id/inPlayerDuration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:background="@drawable/textview_background"
+                android:text="Duration"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/inPlayerPublishDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_below="@+id/inPlayerDuration"
+                android:background="@drawable/textview_background"
+                android:layout_gravity="start"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:text="Published"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/podcastTopic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:background="@drawable/textview_background"
+                android:layout_below="@+id/inPlayerPublishDate"
+                android:layout_gravity="start"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:text="Topic"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/podcastListnedBy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textview_background"
+                android:layout_below="@+id/podcastTopic"
+                android:layout_gravity="start"
+                android:textColor="@color/black"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:text="Listened by"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/podcastLikedBy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textview_background"
+                android:layout_below="@+id/podcastListnedBy"
+                android:textColor="@color/black"
+                android:layout_gravity="start"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:text="Liked by"
+                android:textSize="16sp" />
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:layout_margin="10dp"
+            android:id="@+id/adView2"
+            android:layout_below="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+        </com.google.android.gms.ads.AdView>
+
+
+
+    </LinearLayout>
 
 
 </ScrollView>

@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/myAccount_id"
-        android:title="My Account" />
-    <item
-        android:id="@+id/contactUs"
-        android:title="Contact Us"/>
+    <group>
+        <item
+            android:id="@+id/myAccount_id"
+            android:title="My Account"
+            android:icon="@drawable/ic_baseline_mail_24"/>
+        <item
+            android:id="@+id/contactUs"
+            android:title="Contact Us"
+            android:icon="@drawable/contact_us"/>
 
-    <item
-        android:id="@+id/podcasts"
-        android:title="Podcasts"/>
+        <item
+            android:id="@+id/podcasts"
+            android:title="Podcasts"
+            android:icon="@drawable/podcast"/>
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/tnc"
+            android:title="Terms and Conditions"
+            android:icon="@drawable/ic_baseline_terms_and_conditions"/>
+        <item
+            android:id="@+id/privacyPolicy"
+            android:title="Privacy Policy"
+            android:icon="@drawable/ic_baseline_privacy_policy"/>
+    </group>
+
+
 </menu>
