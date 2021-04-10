@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -23,8 +24,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.ump.ConsentInformation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.EventListener;
@@ -64,12 +69,15 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
 
     private boolean previousState=false;
     private boolean ready=false;
+    private AdView adView;
 
    ProgressDialog dialog;
     private boolean likeCheck=false;
 
     private static int listenedByCount;
     private static int LikedByCount;
+    private ConnectivityManager cm;
+    private ConnectivityManager.NetworkCallback networkCallback;
 
 
     @Override
@@ -91,6 +99,7 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
         timeLeft=findViewById(R.id.timeleft);
         likeButton=findViewById(R.id.like);
         likedBy=findViewById(R.id.podcastLikedBy);
+        displayAd();
 
         final Bundle bundle = getIntent().getExtras();
        /* builder=new AlertDialog.Builder(this);
@@ -155,9 +164,9 @@ mediaPlayer.pause();
         }    }
         });
 
-        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N) {
-            cm.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback(){
+         cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            networkCallback =new ConnectivityManager.NetworkCallback(){
                 @Override
                 public void onAvailable(@NonNull Network network) {
                     super.onAvailable(network);
@@ -193,16 +202,16 @@ runOnUiThread(new Runnable() {
                  }
 
 
-            });
+            };
 
-        }
+cm.registerDefaultNetworkCallback(networkCallback);
 
 
         if (bundle != null) {
      index=bundle.getInt("index");
 
             list = podcast_Activity.getPodcastList();
-
+if(index<=(list.size()-1)){
 
             duration.setText(getString(R.string.duration) + list.get(index).getDuration());
             publishDate.setText(getString(R.string.published) + list.get(index).getDate());
@@ -213,9 +222,20 @@ runOnUiThread(new Runnable() {
 
 
 
-setMediaPlayer();
+setMediaPlayer();}else{
+    dialog.dismiss();
+    Toast.makeText(this, "Problem occurred", Toast.LENGTH_SHORT).show();
+
+ this.finish();
 
 
+}
+
+
+        }else {
+            dialog.dismiss();
+            Toast.makeText(this, "Problem occurred", Toast.LENGTH_SHORT).show();
+            this.finish();
         }
     }
 
@@ -350,14 +370,7 @@ message.setVisibility(View.GONE);}
             }
 
         };
-        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                Toast.makeText(podcastPlayer.this, "Error occurred", Toast.LENGTH_SHORT).show();
-                return false;
-            }
 
-        });
         mediaPlayer.setOnPreparedListener(preparedListener);
         mediaPlayer.prepareAsync();
 
@@ -384,6 +397,7 @@ message.setVisibility(View.GONE);}
 
 
     }
+
 
     public synchronized boolean getFlag(){
         notifyAll();
@@ -419,6 +433,13 @@ notifyAll();
                 mediaPlayer.release();
                 mediaPlayer =null;
             }}
+
+        if(adView!=null){
+            adView.destroy();
+        }
+        if(cm!=null && networkCallback!=null){
+            cm.unregisterNetworkCallback(networkCallback);
+        }
     }
 
     @Override
@@ -724,5 +745,18 @@ if (likeCheck){
         });
 
     }
+
+    public void displayAd(){
+
+             adView = findViewById(R.id.adView2);
+
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adRequest.isTestDevice(podcastPlayer.this);
+
+            adView.loadAd(adRequest);
+        }
+
+
 
 }

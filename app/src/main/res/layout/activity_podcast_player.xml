@@ -109,7 +109,19 @@
         android:text="Liked by"
         android:layout_margin="10dp"
         android:layout_gravity="start"/>
-
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:layout_margin="10dp"
+        android:id="@+id/adView2"
+        android:layout_below="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+    </com.google.android.gms.ads.AdView>
 
 </LinearLayout>
+
+
+
 </ScrollView>

@@ -42,6 +42,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -185,7 +186,8 @@ public class SignIn_Activity extends AppCompatActivity {
         if(account!=null)
         {
             final String personEmail = account.getEmail();
-            db.collection("UserDetails").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            Source source = Source.SERVER;
+            db.collection("UserDetails").get(source).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                     int c=0;
@@ -232,6 +234,7 @@ public class SignIn_Activity extends AppCompatActivity {
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(SignIn_Activity.this, "Problem occurred \n You may try again", Toast.LENGTH_LONG).show();
                                         pb.setVisibility(View.INVISIBLE);
                                     }
                                 });}
@@ -239,14 +242,14 @@ public class SignIn_Activity extends AppCompatActivity {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(SignIn_Activity.this, "Problem occurred \n You may try again", Toast.LENGTH_LONG).show();
                     pb.setVisibility(View.INVISIBLE);
                 }
             });
 
 
-
-            //  Toast.makeText(this, personName+" "+personEmail, Toast.LENGTH_SHORT).show();
         }
     }
+
 
 }
