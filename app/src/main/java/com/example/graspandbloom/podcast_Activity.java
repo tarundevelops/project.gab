@@ -31,6 +31,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.ump.ConsentDebugSettings;
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.ConsentInformation;
@@ -94,10 +95,10 @@ private TextView itext;
             public void onAvailable(@NonNull Network network) {
                 super.onAvailable(network);
                 firstCheck=true;
-//                if(!iCheck){
- //              Toast.makeText(podcast_Activity.this, "Internet Available", Toast.LENGTH_SHORT).show();
-//                iCheck=true;
-//                }
+                if(!iCheck){
+               Toast.makeText(podcast_Activity.this, "Internet Available", Toast.LENGTH_SHORT).show();
+                iCheck=true;
+                }
 
             }
 
@@ -121,35 +122,35 @@ private TextView itext;
 
 
 
-//        ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(this).setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA).setForceTesting(true).build();
-//
-//        ConsentRequestParameters param = new ConsentRequestParameters.Builder().setConsentDebugSettings(debugSettings).setTagForUnderAgeOfConsent(false).build();
-//        ci = UserMessagingPlatform.getConsentInformation(this);
-//        ci.requestConsentInfoUpdate(this, param, new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
-//            @Override
-//            public void onConsentInfoUpdateSuccess() {
-//
-//
-//                Log.d("ConsentStatus0", (ci.isConsentFormAvailable())+""+ci.getConsentStatus());
-//if(ci.isConsentFormAvailable()){
-//                loadConsent();}else if(ci.getConsentStatus() == ConsentInformation.ConsentStatus.NOT_REQUIRED) {
-////    MobileAds.initialize(podcast_Activity.this);
-////    adView = findViewById(R.id.adView);
-////
-////
-////    AdRequest adRequest =new AdRequest.Builder().build();
-////    adRequest.isTestDevice(podcast_Activity.this);
-////    adView.loadAd(adRequest);
-//
-//}
-//
-//            }
-//        }, new ConsentInformation.OnConsentInfoUpdateFailureListener() {
-//            @Override
-//            public void onConsentInfoUpdateFailure(FormError formError) {
-//
-//            }
-//        });
+     //   ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(this).setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA).setForceTesting(true).build();
+
+        ConsentRequestParameters param = new ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(false).build();
+        ci = UserMessagingPlatform.getConsentInformation(this);
+        ci.requestConsentInfoUpdate(this, param, new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
+            @Override
+            public void onConsentInfoUpdateSuccess() {
+
+
+                Log.d("ConsentStatus0", (ci.isConsentFormAvailable())+""+ci.getConsentStatus());
+if(ci.isConsentFormAvailable()){
+                loadConsent();}else if(ci.getConsentStatus() == ConsentInformation.ConsentStatus.NOT_REQUIRED) {
+    MobileAds.initialize(podcast_Activity.this);
+    adView = findViewById(R.id.adView);
+
+
+    AdRequest adRequest =new AdRequest.Builder().build();
+    adRequest.isTestDevice(podcast_Activity.this);
+    adView.loadAd(adRequest);
+
+}
+
+            }
+        }, new ConsentInformation.OnConsentInfoUpdateFailureListener() {
+            @Override
+            public void onConsentInfoUpdateFailure(FormError formError) {
+
+            }
+        });
 
 
 
@@ -209,7 +210,21 @@ private TextView itext;
             }
         });
 
+db.collection("Notice").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+    @Override
+    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+   for(QueryDocumentSnapshot snapshot:queryDocumentSnapshots){
+       String displayNotice = (String) snapshot.get("notice");
+       if(displayNotice!=null){
+           if(!displayNotice.isEmpty()){
+             Snackbar.make(podcast_Activity.this,podcast_Activity.this.findViewById(R.id.imageView),displayNotice,10000).show();
 
+
+           }
+       }
+   }
+    }
+});
 
     }
     public void loadConsent() {
@@ -228,13 +243,13 @@ private TextView itext;
                         @Override
                         public void onConsentFormDismissed(@Nullable FormError formError) {
 
-                 //               MobileAds.initialize(podcast_Activity.this);
-//                            adView = findViewById(R.id.adView);
-//
-//
-//                            AdRequest adRequest =new AdRequest.Builder().build();
-//                            adRequest.isTestDevice(podcast_Activity.this);
-//                            adView.loadAd(adRequest);
+                                MobileAds.initialize(podcast_Activity.this);
+                            adView = findViewById(R.id.adView);
+
+
+                            AdRequest adRequest =new AdRequest.Builder().build();
+                            adRequest.isTestDevice(podcast_Activity.this);
+                            adView.loadAd(adRequest);
 
 
 
@@ -243,13 +258,13 @@ private TextView itext;
                         }
                     });
                 }else if(ci.getConsentStatus() == ConsentInformation.ConsentStatus.NOT_REQUIRED){
-             //       MobileAds.initialize(podcast_Activity.this);
-//                    adView = findViewById(R.id.adView);
-//
-//
-//                    AdRequest adRequest =new AdRequest.Builder().build();
-//                    adRequest.isTestDevice(podcast_Activity.this);
-//                    adView.loadAd(adRequest);
+                    MobileAds.initialize(podcast_Activity.this);
+                    adView = findViewById(R.id.adView);
+
+
+                    AdRequest adRequest =new AdRequest.Builder().build();
+                    adRequest.isTestDevice(podcast_Activity.this);
+                    adView.loadAd(adRequest);
 
                 }
 
@@ -315,7 +330,11 @@ private TextView itext;
     protected void onPause() {
         super.onPause();
         if(cm!=null && networkCallback!=null && !hasRestarted ){
-cm.unregisterNetworkCallback(networkCallback);
+            try{
+cm.unregisterNetworkCallback(networkCallback);}catch (Exception e){
+                Toast.makeText(this, "Handled", Toast.LENGTH_SHORT).show();
+
+            }
       }
 
     }
@@ -332,9 +351,12 @@ cm.unregisterNetworkCallback(networkCallback);
 
         if(adView!=null){
             adView.destroy();
-        }
+      }
         if(cm!=null && networkCallback!=null){
-            cm.unregisterNetworkCallback(networkCallback);
+            try{
+            cm.unregisterNetworkCallback(networkCallback);}catch (Exception e){
+
+            }
         }
 
 

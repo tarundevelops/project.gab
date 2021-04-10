@@ -99,7 +99,7 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
         timeLeft=findViewById(R.id.timeleft);
         likeButton=findViewById(R.id.like);
         likedBy=findViewById(R.id.podcastLikedBy);
-        //displayAd();
+        displayAd();
 
         final Bundle bundle = getIntent().getExtras();
        /* builder=new AlertDialog.Builder(this);
@@ -434,9 +434,9 @@ notifyAll();
                 mediaPlayer =null;
             }}
 
-//        if(adView!=null){
-//            adView.destroy();
-//        }
+        if(adView!=null){
+            adView.destroy();
+        }
         if(cm!=null && networkCallback!=null){
             cm.unregisterNetworkCallback(networkCallback);
         }
@@ -746,16 +746,16 @@ if (likeCheck){
 
     }
 
-//    public void displayAd(){
-//
-//             adView = findViewById(R.id.adView2);
-//
-//
-//            AdRequest adRequest = new AdRequest.Builder().build();
-//            adRequest.isTestDevice(podcastPlayer.this);
-//
-//            adView.loadAd(adRequest);
-//        }
+    public void displayAd(){
+
+             adView = findViewById(R.id.adView2);
+
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adRequest.isTestDevice(podcastPlayer.this);
+
+            adView.loadAd(adRequest);
+        }
 
 
 
