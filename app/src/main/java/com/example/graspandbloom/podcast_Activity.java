@@ -250,8 +250,8 @@ db.collection("Notice").get().addOnSuccessListener(new OnSuccessListener<QuerySn
             @Override
             public void onConsentFormLoadSuccess(ConsentForm consentForm) {
                 podcast_Activity.this.c = consentForm;
-                Log.d("ConsentStatus", (ci.getConsentStatus())+"");
-                Log.d("ConsentStatus1", (ci.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED)+"");
+                Log.d("ConsentStatus", (ci.getConsentStatus())+"");   // Remove
+                Log.d("ConsentStatus1", (ci.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED)+""); //Remove
 
                 if (ci.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
 

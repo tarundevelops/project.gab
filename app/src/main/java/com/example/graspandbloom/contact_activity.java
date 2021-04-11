@@ -25,7 +25,6 @@ import java.util.Objects;
 public class contact_activity extends AppCompatActivity {
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawerLayout;
-
     private NavigationView navigationView;
     private Button signout;
     private TextView mail;
@@ -43,7 +42,6 @@ public class contact_activity extends AppCompatActivity {
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.black));
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
         mail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +92,7 @@ public class contact_activity extends AppCompatActivity {
         signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(contact_activity.this, "ok", Toast.LENGTH_SHORT).show();
+                Toast.makeText(contact_activity.this, "ok", Toast.LENGTH_SHORT).show(); //Remove
                 FirebaseAuth auth=FirebaseAuth.getInstance();
                 auth.signOut();
                 Intent i = new Intent(contact_activity.this,SignIn_Activity.class);

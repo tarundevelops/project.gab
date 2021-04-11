@@ -246,11 +246,11 @@ setMediaPlayer();}else{
         dialog.show();
 
         mediaPlayer = new MediaPlayer();
-        Log.d("Looping 1", "onCreate: "+mediaPlayer.isLooping());
+        Log.d("Looping 1", "onCreate: "+mediaPlayer.isLooping());  //Remove
 
         try {
             mediaPlayer.setDataSource(list.get(index).getAudioUrl());
-            Log.d("Looping 2", "onCreate: "+mediaPlayer.isLooping());
+            Log.d("Looping 2", "onCreate: "+mediaPlayer.isLooping());   //Remove
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error occured", Toast.LENGTH_SHORT).show();
