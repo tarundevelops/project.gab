@@ -60,7 +60,7 @@ ImageView userImage;
         signout = findViewById(R.id.signout_button_myAccnt);
         drawerLayout = findViewById(R.id.drawerLayout_myAccnt);
         toggle = new ActionBarDrawerToggle(myAccount.this, drawerLayout, R.string.Drawer_open, R.string.Drawer_close);
-
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.black));
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
