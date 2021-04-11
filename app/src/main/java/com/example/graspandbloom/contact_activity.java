@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
@@ -27,24 +28,37 @@ public class contact_activity extends AppCompatActivity {
 
     private NavigationView navigationView;
     private Button signout;
+    private TextView mail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_activity);
         Toolbar toolbar = findViewById(R.id.toolbar_1);
+        mail = findViewById(R.id.tvMail1);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         signout = findViewById(R.id.signout_button);
         drawerLayout = findViewById(R.id.drawerLayout_CA);
         toggle = new ActionBarDrawerToggle(contact_activity.this, drawerLayout, R.string.Drawer_open, R.string.Drawer_close);
-
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.black));
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        mail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent (Intent.ACTION_VIEW , Uri.parse("mailto:" + "contact@decib.in"));
+                intent.putExtra(Intent.EXTRA_SUBJECT, "your_subject");
+                intent.putExtra(Intent.EXTRA_TEXT, "your_text");
+                startActivity(intent);
+            }
+        });
 
         navigationView = findViewById(R.id.nv_1);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
 
                 switch (item.getItemId()){
                     case R.id.myAccount_id: startActivity(new Intent(contact_activity.this, myAccount.class));

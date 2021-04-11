@@ -205,7 +205,9 @@ runOnUiThread(new Runnable() {
 
             };
 
-cm.registerDefaultNetworkCallback(networkCallback);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cm.registerDefaultNetworkCallback(networkCallback);
+        }
 
 
         if (bundle != null) {
