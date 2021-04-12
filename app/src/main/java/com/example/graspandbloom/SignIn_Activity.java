@@ -64,6 +64,7 @@ public class SignIn_Activity extends AppCompatActivity {
     private Boolean iCheck = false;
     private Boolean firstCheck =true;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
