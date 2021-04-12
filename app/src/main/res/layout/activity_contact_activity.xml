@@ -38,7 +38,7 @@
             android:id="@+id/tvMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You may contact us by just clicking the mail address below."
+            android:text="You may contact us with email address given below."
             android:textSize="20sp"
             android:layout_below="@+id/tvName"
             android:background="@drawable/textview_background"

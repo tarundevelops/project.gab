@@ -12,14 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.os.PersistableBundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,15 +26,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.ump.ConsentDebugSettings;
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.ConsentRequestParameters;
@@ -91,7 +89,6 @@ private TextView itext;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_podcast);
 
-        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
 
          cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
          networkCallback =new ConnectivityManager.NetworkCallback(){
@@ -126,7 +123,7 @@ private TextView itext;
 
 
 
-     //   ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(this).setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA).setForceTesting(true).build();
+
 
         ConsentRequestParameters param = new ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(false).build();
         ci = UserMessagingPlatform.getConsentInformation(this);
@@ -135,16 +132,23 @@ private TextView itext;
             public void onConsentInfoUpdateSuccess() {
 
 
-                Log.d("ConsentStatus0", (ci.isConsentFormAvailable())+""+ci.getConsentStatus());
 if(ci.isConsentFormAvailable()){
                 loadConsent();}else if(ci.getConsentStatus() == ConsentInformation.ConsentStatus.NOT_REQUIRED) {
     MobileAds.initialize(podcast_Activity.this);
     adView = findViewById(R.id.adView);
+    Bundle networkExtrasBundle = new Bundle();
+    networkExtrasBundle.putInt("rdp", 1);
+    AdRequest request = new AdRequest.Builder()
+            .addNetworkExtrasBundle(AdMobAdapter.class, networkExtrasBundle)
+            .build();
+    SharedPreferences sharedPref = podcast_Activity.this.getPreferences(Context.MODE_PRIVATE);
+    SharedPreferences.Editor editor = sharedPref.edit();
+    editor.putInt("gad_rdp", 1);
+    editor.commit();
 
 
-    AdRequest adRequest =new AdRequest.Builder().build();
-    adRequest.isTestDevice(podcast_Activity.this);
-    adView.loadAd(adRequest);
+    request.isTestDevice(podcast_Activity.this);
+    adView.loadAd(request);
 
 }
 
@@ -180,7 +184,6 @@ if(ci.isConsentFormAvailable()){
 
 
 
-        //View v = navigationView.inflateHeaderView(R.layout.drawerheader);
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -217,7 +220,7 @@ if(ci.isConsentFormAvailable()){
         signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(podcast_Activity.this, "ok", Toast.LENGTH_SHORT).show();
+
                 FirebaseAuth auth=FirebaseAuth.getInstance();
                 auth.signOut();
                 Intent i = new Intent(podcast_Activity.this,SignIn_Activity.class);
@@ -250,8 +253,7 @@ db.collection("Notice").get().addOnSuccessListener(new OnSuccessListener<QuerySn
             @Override
             public void onConsentFormLoadSuccess(ConsentForm consentForm) {
                 podcast_Activity.this.c = consentForm;
-                Log.d("ConsentStatus", (ci.getConsentStatus())+"");   // Remove
-                Log.d("ConsentStatus1", (ci.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED)+""); //Remove
+
 
                 if (ci.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
 
@@ -262,11 +264,19 @@ db.collection("Notice").get().addOnSuccessListener(new OnSuccessListener<QuerySn
                                 MobileAds.initialize(podcast_Activity.this);
                             adView = findViewById(R.id.adView);
 
+                            Bundle networkExtrasBundle = new Bundle();
+                            networkExtrasBundle.putInt("rdp", 1);
+                            AdRequest request = new AdRequest.Builder()
+                                    .addNetworkExtrasBundle(AdMobAdapter.class, networkExtrasBundle)
+                                    .build();
+                            SharedPreferences sharedPref = podcast_Activity.this.getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putInt("gad_rdp", 1);
+                            editor.commit();
 
-                            AdRequest adRequest =new AdRequest.Builder().build();
-                            adRequest.isTestDevice(podcast_Activity.this);
-                            adView.loadAd(adRequest);
 
+                            request.isTestDevice(podcast_Activity.this);
+                            adView.loadAd(request);
 
 
 
@@ -276,11 +286,19 @@ db.collection("Notice").get().addOnSuccessListener(new OnSuccessListener<QuerySn
                 }else if(ci.getConsentStatus() == ConsentInformation.ConsentStatus.NOT_REQUIRED){
                     MobileAds.initialize(podcast_Activity.this);
                     adView = findViewById(R.id.adView);
+                    Bundle networkExtrasBundle = new Bundle();
+                    networkExtrasBundle.putInt("rdp", 1);
+                    AdRequest request = new AdRequest.Builder()
+                            .addNetworkExtrasBundle(AdMobAdapter.class, networkExtrasBundle)
+                            .build();
+                    SharedPreferences sharedPref = podcast_Activity.this.getPreferences(Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putInt("gad_rdp", 1);
+                    editor.commit();
 
 
-                    AdRequest adRequest =new AdRequest.Builder().build();
-                    adRequest.isTestDevice(podcast_Activity.this);
-                    adView.loadAd(adRequest);
+                    request.isTestDevice(podcast_Activity.this);
+                    adView.loadAd(request);
 
                 }
 
@@ -301,10 +319,10 @@ db.collection("Notice").get().addOnSuccessListener(new OnSuccessListener<QuerySn
     @Override
     protected void onStart() {
         super.onStart();
-        Toast.makeText(this, ""+this.hasRestarted, Toast.LENGTH_SHORT).show();
-//if(!this.hasRestarted){
+
+
    listPosterLoad();
-//    }
+
 
     }
 
@@ -348,7 +366,7 @@ db.collection("Notice").get().addOnSuccessListener(new OnSuccessListener<QuerySn
         if(cm!=null && networkCallback!=null && !hasRestarted ){
             try{
 cm.unregisterNetworkCallback(networkCallback);}catch (Exception e){
-                Toast.makeText(this, "Handled", Toast.LENGTH_SHORT).show();
+
 
             }
       }
@@ -358,9 +376,9 @@ cm.unregisterNetworkCallback(networkCallback);}catch (Exception e){
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "onDestroy called", Toast.LENGTH_SHORT).show();
+
         if(ci!=null){
-            Toast.makeText(this, ""+ci.getConsentType(), Toast.LENGTH_SHORT).show();
+
             ci.reset();
             ci=null;
         }
@@ -389,7 +407,7 @@ cm.unregisterNetworkCallback(networkCallback);}catch (Exception e){
 
     public void listPosterLoad(){
         if(firstCheck) {
-            Toast.makeText(this, "Called ok", Toast.LENGTH_SHORT).show();
+
             recyclerView.setVisibility(View.VISIBLE);
             db.collection("podcastImage").document("Image").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
@@ -423,7 +441,7 @@ cm.unregisterNetworkCallback(networkCallback);}catch (Exception e){
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                   // Toast.makeText(podcast_Activity.this, "Error occured "+e.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(podcast_Activity.this, "Problem occurred", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -439,13 +457,6 @@ cm.unregisterNetworkCallback(networkCallback);}catch (Exception e){
     protected void onRestart() {
         super.onRestart();
 hasRestarted=false;
-//this.hasRestarted = true;
-//if(!firstCheck){
-//    db.disableNetwork();
-//    Intent load = new Intent(podcast_Activity.this, myAccount.class);
-//    startActivity(load);
-//
-//    podcast_Activity.this.finish();
-//}
+
     }
 }

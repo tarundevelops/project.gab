@@ -3,21 +3,21 @@ package com.example.graspandbloom;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -58,6 +58,11 @@ public class SignIn_Activity extends AppCompatActivity {
 
     private ProgressBar pb;
     private TextView textView2;
+    private ConnectivityManager cm;
+    private ConnectivityManager.NetworkCallback networkCallback;
+
+    private Boolean iCheck = false;
+    private Boolean firstCheck =true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +73,33 @@ public class SignIn_Activity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         pb=findViewById(R.id.pbId);
          textView2 = findViewById(R.id.textView2);
+        cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkCallback =new ConnectivityManager.NetworkCallback(){
+            @Override
+            public void onAvailable(@NonNull Network network) {
+                super.onAvailable(network);
+                iCheck=true;
+                if(!firstCheck){
+                    Toast.makeText(SignIn_Activity.this, "Internet Available", Toast.LENGTH_SHORT).show();
 
-       String message = "By signing in, you are accepting our Terms and Conditions and Privacy Policy.";
+                }
+
+            }
+
+            @Override
+            public void onLost(@NonNull Network network) {
+                super.onLost(network);
+                iCheck=false;
+                firstCheck=false;
+
+                Toast.makeText(SignIn_Activity.this, "Internet not available", Toast.LENGTH_SHORT).show();
+
+            }
+        };
+        cm.registerDefaultNetworkCallback(networkCallback);
+
+
+        String message = "By signing in, you are accepting our Terms and Conditions and Privacy Policy.";
         SpannableString spannable1 = new SpannableString(message);
 
        spannable1.setSpan(new BackgroundColorSpan(ContextCompat.getColor(
@@ -116,9 +146,12 @@ public class SignIn_Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-
-                signIn();
-
+if(iCheck) {
+    signIn();
+}else {
+    Toast.makeText(SignIn_Activity.this, "Internet not available", Toast.LENGTH_SHORT).show();
+    firstCheck=false;
+}
 
             }
         });
@@ -146,12 +179,11 @@ public class SignIn_Activity extends AppCompatActivity {
         try{
 
             final GoogleSignInAccount acc = task.getResult(ApiException.class);
-            Toast.makeText(getApplicationContext(),"Signing Success",Toast.LENGTH_SHORT).show();
             FirebaseGoogleAuth(acc);
 
         }catch(ApiException e)
         {
-            Toast.makeText(getApplicationContext(),"Signing Failed",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Sign In process failed", Toast.LENGTH_SHORT).show();
             pb.setVisibility(View.INVISIBLE);
             // FirebaseGoogleAuth(null);
         }
@@ -165,7 +197,7 @@ public class SignIn_Activity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
-                    Toast.makeText(SignIn_Activity.this,"Successful",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignIn_Activity.this,"Successfully signed in",Toast.LENGTH_SHORT).show();
                     FirebaseUser user = mAuth.getCurrentUser();
                     updateUI(user);
 
@@ -174,7 +206,7 @@ public class SignIn_Activity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(SignIn_Activity.this,"Failed",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignIn_Activity.this,"Sign In process failed",Toast.LENGTH_SHORT).show();
                     pb.setVisibility(View.INVISIBLE);
                     //   updateUI(null);
                 }
@@ -204,7 +236,7 @@ public class SignIn_Activity extends AppCompatActivity {
 
                         pb.setVisibility(View.INVISIBLE);
                         startActivity(i);
-
+                        Toast.makeText(SignIn_Activity.this, "Welcome back", Toast.LENGTH_SHORT).show();
                         SignIn_Activity.this.finish();
                     }
                     else if (c==0){
@@ -228,7 +260,7 @@ public class SignIn_Activity extends AppCompatActivity {
                                         pb.setVisibility(View.INVISIBLE);
 
                                         startActivity(i);
-
+                                        Toast.makeText(SignIn_Activity.this, "Welcome to DeciB", Toast.LENGTH_SHORT).show();
                                         SignIn_Activity.this.finish();
 
                                     }
@@ -253,5 +285,32 @@ public class SignIn_Activity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            cm.unregisterNetworkCallback(networkCallback);}catch (Exception e){
 
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        try {
+            cm.registerDefaultNetworkCallback(networkCallback);}catch (Exception e){
+
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        try {
+        cm.unregisterNetworkCallback(networkCallback);}catch (Exception e){
+
+        }
+    }
 }

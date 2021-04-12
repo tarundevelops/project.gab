@@ -5,8 +5,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,28 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
-import com.google.firebase.auth.GoogleAuthCredential;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
-
 import java.util.Objects;
 
 public class myAccount extends AppCompatActivity {
@@ -67,7 +47,6 @@ ImageView userImage;
 
         navigationView = findViewById(R.id.nv_myAccnt);
 
-        //View v = navigationView.inflateHeaderView(R.layout.drawerheader);
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -105,7 +84,6 @@ ImageView userImage;
         signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(myAccount.this, "ok", Toast.LENGTH_SHORT).show();
                 FirebaseAuth auth=FirebaseAuth.getInstance();
                 auth.signOut();
                 Intent i = new Intent(myAccount.this,SignIn_Activity.class);
@@ -122,8 +100,8 @@ ImageView userImage;
 
         Picasso.get().load(currentuser.getPhotoUrl()).into(userImage);
 
-        userName.setText("Name :"+currentuser.getDisplayName());
-        emailAddres.setText("Email address :"+currentuser.getEmail());
+        userName.setText("Name : "+currentuser.getDisplayName());
+        emailAddres.setText("Email address : "+currentuser.getEmail());
 
 
 
