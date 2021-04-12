@@ -39,7 +39,7 @@ public class recyclerv extends RecyclerView.Adapter<recyclerv.ViewHolder> {
 
         PodcastModel m = eventList.get(position);
         holder.topic.setText(m.getTopic());
-        Picasso.get().load(m.getImageUrl()).fit().into(holder.Image);
+        Picasso.get().load(m.getImageUrl()).fit().placeholder(R.drawable.decib_loading).into(holder.Image);
 
 
 

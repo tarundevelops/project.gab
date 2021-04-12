@@ -2,21 +2,18 @@ package com.example.graspandbloom;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -24,13 +21,11 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.ump.ConsentInformation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.EventListener;
@@ -38,7 +33,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.Source;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -86,7 +80,6 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_podcast_player);
 
-
         button = findViewById(R.id.button);
         message=findViewById(R.id.message);
         restartPlayer =findViewById(R.id.tryagain);
@@ -103,10 +96,7 @@ public class podcastPlayer extends AppCompatActivity implements Runnable {
         displayAd();
 
         final Bundle bundle = getIntent().getExtras();
-       /* builder=new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.media_player_loading,null);
-        builder.setView(view);
-        dialog=builder.create();*/
+
         dialog = ProgressDialog.show(this, "", "Loading ....");
         dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
@@ -221,7 +211,7 @@ if(index<=(list.size()-1)){
             topic.setText(getString(R.string.Topic)+list.get(index).getTopic());
             getListenedBy();
             getLikedBy();
-            Picasso.get().load(list.get(index).getImageUrl()).into(image);
+            Picasso.get().load(list.get(index).getImageUrl()).placeholder(R.drawable.decib_loading).into(image);
 
 
 
@@ -246,14 +236,14 @@ setMediaPlayer();}else{
         dialog.show();
 
         mediaPlayer = new MediaPlayer();
-        Log.d("Looping 1", "onCreate: "+mediaPlayer.isLooping());  //Remove
+
 
         try {
             mediaPlayer.setDataSource(list.get(index).getAudioUrl());
-            Log.d("Looping 2", "onCreate: "+mediaPlayer.isLooping());   //Remove
+
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error occured", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Problem occurred", Toast.LENGTH_SHORT).show();
         }
 
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -421,7 +411,7 @@ notifyAll();
                 Thread.yield();
                 wait(1);
             } catch (InterruptedException e) {
-              //  e.printStackTrace();
+
             }
         }}}
         if (mediaPlayer != null){
@@ -454,13 +444,13 @@ while(!getFlag()){
 
         wait(1);
     } catch (InterruptedException e) {
-        Toast.makeText(this, "Error occured", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Problem occurred", Toast.LENGTH_SHORT).show();
     }
 }}
         try {
             Thread.sleep(1000);}
         catch (InterruptedException e){
-            Toast.makeText(this, "Error occured", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Problem occurred", Toast.LENGTH_SHORT).show();
         }
 
 int c=0;
@@ -486,7 +476,7 @@ if (c>4){
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                Toast.makeText(this, "Error occured", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Problem occurred", Toast.LENGTH_SHORT).show();
             }
         }
         if (mediaPlayer.getCurrentPosition() >=mediaDuration){
@@ -548,7 +538,7 @@ synchronized (this) {
         final ArrayList<QueryDocumentSnapshot> d=new ArrayList<>();
 
 if (likeCheck){
-
+    Toast.makeText(this, "Unliked", Toast.LENGTH_SHORT).show();
 
     db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
         @Override
@@ -558,7 +548,6 @@ if (likeCheck){
                 if (value!=null){
                     if (!value.isEmpty()) {
                         for (QueryDocumentSnapshot documentSnapshot:value) {
-
 
                             d.add(documentSnapshot);
 
@@ -573,11 +562,11 @@ if (likeCheck){
                             @SuppressLint("ResourceAsColor")
                             @Override
                             public void onSuccess(Void aVoid) {
-
                                     likeCheck=false;
                                     check[0] =true;
 
-                                    likeButton.setBackgroundColor(R.color.likeColor);
+                                likeButton.setBackgroundResource(R.drawable.round_btn);
+
                                     d.clear();
 
                                     getLikedBy();
@@ -586,7 +575,7 @@ if (likeCheck){
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-
+                                Toast.makeText(podcastPlayer.this, "Failed "+e.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });}
                     }
@@ -596,7 +585,7 @@ if (likeCheck){
     });
 }else{
 
-
+    Toast.makeText(this, "Liked", Toast.LENGTH_SHORT).show();
     db.collection("podcast").whereEqualTo("audioUrl",list.get(index).getAudioUrl()).addSnapshotListener(new EventListener<QuerySnapshot>() {
         @Override
         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -623,7 +612,8 @@ if (likeCheck){
                                     likeCheck=true;
                                     check[0] =true;
 
-                                    likeButton.setBackgroundColor(R.color.likeColor);
+                                    likeButton.setBackgroundResource(R.drawable.like_button_activated_color);
+
                                     d.clear();
 
                                     getLikedBy();
@@ -631,6 +621,7 @@ if (likeCheck){
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(podcastPlayer.this, "Failed "+e.toString(), Toast.LENGTH_SHORT).show();
 
                             }
                         });}
@@ -669,8 +660,8 @@ if (likeCheck){
 
 
 
-                                    Source source =Source.SERVER;
-                                    db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").get(source).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+
+                                    db.collection("podcast").document(d.get(0).getId()).collection("LikedBy").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                         @SuppressLint("ResourceAsColor")
                                         @Override
                                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -680,7 +671,7 @@ if (likeCheck){
                                                     likeCheck=true;
 
 
-                                                    likeButton.setBackgroundColor(R.color.likeColor);
+                                                    likeButton.setBackgroundResource(R.drawable.like_button_activated_color);
 
                                                 }
 
@@ -728,11 +719,12 @@ if (likeCheck){
                             }
                             if (!check[0]){
 
-                                Source source=Source.SERVER;
 
-                                db.collection("podcast").document(d.get(0).getId()).collection("ListenedBy").get(source).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+
+                                db.collection("podcast").document(d.get(0).getId()).collection("ListenedBy").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
                                         check[0]=true;
 
 
@@ -756,11 +748,20 @@ if (likeCheck){
 
              adView = findViewById(R.id.adView2);
 
+        Bundle networkExtrasBundle = new Bundle();
+        networkExtrasBundle.putInt("rdp", 1);
+        AdRequest request = new AdRequest.Builder()
+                .addNetworkExtrasBundle(AdMobAdapter.class, networkExtrasBundle)
+                .build();
+        SharedPreferences sharedPref = podcastPlayer.this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("gad_rdp", 1);
+        editor.commit();
 
-            AdRequest adRequest = new AdRequest.Builder().build();
-            adRequest.isTestDevice(podcastPlayer.this);
 
-            adView.loadAd(adRequest);
+        request.isTestDevice(podcastPlayer.this);//remove by Tarun
+        adView.loadAd(request);
+
         }
 
 
