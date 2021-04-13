@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 catch (Exception e)
                 {
-                    e.printStackTrace();
+
                 }
                 finally {
                     if (FirebaseAuth.getInstance().getCurrentUser() != null) {
