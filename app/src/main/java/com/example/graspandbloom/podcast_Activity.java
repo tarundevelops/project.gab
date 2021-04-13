@@ -203,6 +203,7 @@ if(ci.isConsentFormAvailable()){
                         Intent openURL = new Intent(android.content.Intent.ACTION_VIEW);
                         openURL.setData(Uri.parse("https://decib.in/terms-and-conditions/"));
                         startActivity(openURL);
+                        hasRestarted=true;
                         break;
                     case R.id.privacyPolicy:
                         Intent intent = new Intent();
@@ -210,6 +211,7 @@ if(ci.isConsentFormAvailable()){
                         intent.addCategory(Intent.CATEGORY_BROWSABLE);
                         intent.setData(Uri.parse("https://decib.in/privacy-policy/"));
                         startActivity(intent);
+                        hasRestarted=true;
                         break;
                 }
                 return false;
