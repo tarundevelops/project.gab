@@ -22,9 +22,7 @@
     </style>
     <style name="decib">
 
-        <item name="android:textSize">
-            45sp
-        </item>
+
 
         <item name="android:textColor">
             #B58A8A
