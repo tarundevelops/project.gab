@@ -11,4 +11,6 @@
     <string name="Topic">Topic :</string>
     <string name="listenedby">Listned by :</string>
     <string name="likedby">Liked by :</string>
+    <string name="myAccountUserName">\"Name : \"</string>
+    <string name="myAccountUserEmailAddress">\"Email address : \"</string>
 </resources>

@@ -100,8 +100,8 @@ ImageView userImage;
 
         Picasso.get().load(currentuser.getPhotoUrl()).into(userImage);
 
-        userName.setText("Name : "+currentuser.getDisplayName());
-        emailAddres.setText("Email address : "+currentuser.getEmail());
+        userName.setText(getString(R.string.myAccountUserName)+currentuser.getDisplayName());
+        emailAddres.setText(getString(R.string.myAccountUserEmailAddress)+currentuser.getEmail());
 
 
 
